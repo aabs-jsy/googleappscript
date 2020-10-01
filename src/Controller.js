@@ -43,8 +43,18 @@ function generatePaymentLinks(event)
 
 function onEdit(e)
 {
-  var oldValue = e.oldValue;
-  generatePaymentLinks(e);
+  var sheet = new Sheet(e);
+
+  // TODO:
+  // ValidateEventToGeneratePaymentLinks
+  // GeneratePaymentLinks
+
+  /* lets check for event validation to generate payment links */
+  var ii = sheet.ValidateEventToGeneratePaymentLinks();
+  //Toast(ii);
+
+  //var oldValue = e.oldValue;
+  //generatePaymentLinks(e);
    
    //SpreadsheetApp.getActive().toast(oldValue + "Script2 activated.");
 }
