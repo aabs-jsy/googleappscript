@@ -9,9 +9,9 @@ var Member = function(memberId)
 
 
 const MemberStatus = {
-  PENDING: 1, 
-  ACTIVE: 2,
-  EXPIRED: 3,
-  ELIMINATED: 4
+  PENDING: "PENDING", 
+  ACTIVE: "ACTIVE",
+  EXPIRED: "EXPIRED",
+  ELIMINATED: "ELIMINATED"
 };
 

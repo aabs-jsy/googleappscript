@@ -1,74 +1,119 @@
-function GetActiveSheet()
-{
-   return SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-}
+class Library {
 
-function Toast(message)
-{
-  SpreadsheetApp.getActive().toast(message);
-}
+  static GetActiveSheet() {
+    return SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  }
 
-function IsValueNullEmptyUndefied(value)
-{
-  return (value == null || value == '' || value == undefined);
-}
+  static Toast(message) {
+    SpreadsheetApp.getActive().toast(message);
+  }
 
-function MatchWithRegx(stringValue,pattern)
-{
-  Toast(stringValue);
-  var regExp = new RegExp(pattern);
-  return regExp.test(stringValue);
-}
+  static Alert(message) {
+    SpreadsheetApp.getUi().alert(message);
+  }
 
-function GetRangeFromActiveSpreadSheet(rowStart, colStart, rowEnd, colEnd)
-{
-  var activeSheet = GetActiveSheet();
-  return activeSheet.getRange(rowStart,colStart,rowEnd,colEnd).getValues();
-}
+  static IsValueNullEmptyUndefied(value) {
+    return (value == null || value == '' || value == undefined);
+  }
 
-function GetSheetRowColumnDetails()
-{
-  var activeSheet = GetActiveSheet();
-  var returnObject = {};
-  
-  returnObject.firstRow = activeSheet.GetFirstRow()
-  returnObject.lastRow = activeSheet.getLastRow()
-  returnObject.firstColumn = activeSheet.GetFirstRow()
-  returnObject.lastColumn = activeSheet.getLastRow()
+  static MatchWithRegx(stringValue, pattern) {
+    var regExp = new RegExp(pattern);
+    return regExp.test(stringValue);
+  }
 
-  return returnObject;
-}
+  static AreStringsEqual(string1, string2)
+  {
+    return (string1.localeCompare(string2) == 0);
+  }
 
-async function GetRowObjectsByColumns(...argsColumns)
-{
-  return new Promise(function(resolve, reject) {
+  static GetRangeFromActiveSpreadSheet(rowStart, colStart, rowEnd, colEnd) {
+    var activeSheet = this.GetActiveSheet();
+    return activeSheet.getRange(rowStart, colStart, rowEnd, colEnd).getValues();
+  }
+
+  static GetSheetRowColumnDetails() {
+    var activeSheet = this.GetActiveSheet();
+    var returnObject = {};
+
+    returnObject.firstRow = 2;
+    returnObject.lastRow = activeSheet.getLastRow();
+    returnObject.firstColumn = 1;
+    returnObject.lastColumn = activeSheet.getLastColumn();
+
+    return returnObject;
+  }
+
+  static ObjectPropertiesToList(object) {
+    var keys = Object.keys(object);
+    var propertyList = [];
     
-    var sheetRowColumnDetails = GetSheetRowColumnDetails();
-  
-    var rangeData = GetRangeFromActiveSpreadSheet(
-      sheetRowColumnDetails.firstRow, 
-      sheetRowColumnDetails.firstColumn, 
-      sheetRowColumnDetails.lastRow, 
-      sheetRowColumnDetails.lastColumn
+    keys.map(x=> propertyList.push(object[x]));
+
+    return propertyList;
+  }
+
+  static GetRowObjectsByColumns(rowStart = null, rowEnd = null) {
+   
+      var sheetRowColumnDetails = this.GetSheetRowColumnDetails();
+
+      var rangeData = Library.GetRangeFromActiveSpreadSheet(
+        rowStart == null ? sheetRowColumnDetails.firstRow : rowStart,
+        sheetRowColumnDetails.firstColumn,
+        rowEnd == null ? sheetRowColumnDetails.lastRow : rowEnd,
+        sheetRowColumnDetails.lastColumn
       );
 
-      var filteredSheetColumns = sheetColumns.filter((x)=> argsColumns.indexOf(x.columnName)>-1 );
-  
+      var sheetColumnHeaderAndIndexList = this.ObjectPropertiesToList(AppConfig.SheetColumnHeaderAndIndexes); //sheetColumns.filter((x) => argsColumns.indexOf(x.columnName) > -1);
+
       var rows = [];
 
-      rangeData.forEach((row,index)=>
-      {
-        var rowListItem = {};
+      rangeData.forEach((row, index) => {
+        var rowItem = {};
 
-        rowListItem.index = index;
+        rowItem.index = index;
 
-        filteredSheetColumns.map((x=> rowListItem[x.columnName] = row[x.index]));
-        
-        rows.push(rowListItem);
+        sheetColumnHeaderAndIndexList.map((x => rowItem[x.header] = row[x.index-1]));
+
+        rows.push(rowItem);
       });
 
-      resolve(rows);
-  });
+      return rows;
+  }
+
+  static GetSignleColumnValuesToArray(columnIndex = null, rowStart = null, rowEnd = null) {
+    var sheetRowColumnDetails = this.GetSheetRowColumnDetails();
+    var rangeData = this.GetRangeFromActiveSpreadSheet(
+      rowStart == null ? sheetRowColumnDetails.firstRow : rowStart,
+      columnIndex == null ? sheetRowColumnDetails.firstColumn : columnIndex,
+      rowEnd == null ? sheetRowColumnDetails.lastRow : rowEnd,
+      columnIndex == null ? sheetRowColumnDetails.firstColumn : columnIndex,
+    );
+
+    var rows = [];
+
+    rangeData.forEach((row, index) => {
+      rows.push(row[0]);
+    });
+
+    return rows;
+  }
+
+  static GetCellValue(rowNumber = null, columnNumber = null) {
+    return new Promise(function (resolve, reject) {
+
+      var sheetRowColumnDetails = this.GetSheetRowColumnDetails();
+
+      var rangeData = this.GetRangeFromActiveSpreadSheet(
+        rowNumber == null ? sheetRowColumnDetails.firstRow : rowNumber,
+        columnNumber == null ? sheetRowColumnDetails.firstColumn : columnNumber,
+        rowNumber == null ? sheetRowColumnDetails.firstRow : rowNumber,
+        columnNumber == null ? sheetRowColumnDetails.firstColumn : columnNumber,
+      );
+
+      resolve(rows[0][0]);
+    });
+  }
+
 }
 
 
