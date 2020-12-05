@@ -59,15 +59,21 @@ SpreadsheetApp.getUi().showModalDialog(htmlOutput, 'My add-on');
 }
 
 function onEdit(e) {
-  //var sheet = new Sheet(e);
+  try{
+    var sheet = new Sheet(e);
 
+    /* lets check for event validation to generate payment links */
+    sheet.ValidateEventToGeneratePaymentLinks();
+} catch (error) {
+  Library.Alert(error.message);
+}
+  
   // TODO:
   // ValidateEventToGeneratePaymentLinks
   // GeneratePaymentLinks
-  ActiveScript();
-  /* lets check for event validation to generate payment links */
- // var ii = sheet.ValidateEventToGeneratePaymentLinks();
-   //Library.Alert(ii);
+
+  
+   
 
 // remove value if not accepted memberid on first row(last column only).
 // dont create payment links for middle column change in first row

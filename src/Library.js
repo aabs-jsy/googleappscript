@@ -13,12 +13,17 @@ class Library {
   }
 
   static IsValueNullEmptyUndefied(value) {
-    return (value == null || value == '' || value == undefined);
+    return (!value || value == null || value == '' || value == undefined);
   }
 
   static MatchWithRegx(stringValue, pattern) {
     var regExp = new RegExp(pattern);
     return regExp.test(stringValue);
+  }
+
+  static SetNullToBank(value)
+  {
+    return (this.IsValueNullEmptyUndefied(value)?'':value);
   }
 
   static AreStringsEqual(string1, string2)
