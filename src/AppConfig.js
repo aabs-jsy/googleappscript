@@ -9,5 +9,7 @@ var AppConfig =
         MemberId: { header: "MemberId", index: 1 },
         MemberName: { header: "MemberName", index: 2 },
         Status: { header: "Status", index: 3 }
-    }
+    },
+
+    GenerateReceiptApi: "http://localhost:3000/receipt?payerMemberId={payerMemberId}&payeeMemberId={payeeMemberId}&amount={amount}"
 }

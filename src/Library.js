@@ -1,5 +1,9 @@
 class Library {
 
+  static GetSheetByName(sheetName) {
+    return SpreadsheetApp.getActive().getSheetByName(sheetName);
+  }
+
   static GetActiveSheet() {
     return SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   }
@@ -31,9 +35,14 @@ class Library {
     return (string1.localeCompare(string2) == 0);
   }
 
-  static GetRangeFromActiveSpreadSheet(rowStart, colStart, rowEnd, colEnd) {
+  static GetRangeFromActiveSpreadSheet(rowStart, colStart, numRows, numColumns) {
     var activeSheet = this.GetActiveSheet();
-    return activeSheet.getRange(rowStart, colStart, rowEnd, colEnd).getValues();
+    return activeSheet.getRange(rowStart, colStart, numRows, numColumns);
+  }
+
+  static GetRangeValuesFromActiveSpreadSheet(rowStart, colStart, numRows, numColumns) {
+    return this.GetRangeFromActiveSpreadSheet(rowStart, colStart, numRows, numColumns)
+    .getValues();
   }
 
   static GetSheetRowColumnDetails() {
@@ -57,14 +66,14 @@ class Library {
     return propertyList;
   }
 
-  static GetRowObjectsByColumns(rowStart = null, rowEnd = null) {
+  static GetRowObjectsByColumns(rowStart = null, rowNumber = null) {
    
       var sheetRowColumnDetails = this.GetSheetRowColumnDetails();
 
-      var rangeData = Library.GetRangeFromActiveSpreadSheet(
+      var rangeData = Library.GetRangeValuesFromActiveSpreadSheet(
         rowStart == null ? sheetRowColumnDetails.firstRow : rowStart,
         sheetRowColumnDetails.firstColumn,
-        rowEnd == null ? sheetRowColumnDetails.lastRow : rowEnd,
+        rowNumber == null ? sheetRowColumnDetails.lastRow : rowNumber,
         sheetRowColumnDetails.lastColumn
       );
 
@@ -75,7 +84,9 @@ class Library {
       rangeData.forEach((row, index) => {
         var rowItem = {};
 
-        rowItem.index = index;
+        rowItem = row;
+
+        //rowItem.index = index;
 
         sheetColumnHeaderAndIndexList.map((x => rowItem[x.header] = row[x.index-1]));
 
@@ -87,7 +98,7 @@ class Library {
 
   static GetSignleColumnValuesToArray(columnIndex = null, rowStart = null, rowEnd = null) {
     var sheetRowColumnDetails = this.GetSheetRowColumnDetails();
-    var rangeData = this.GetRangeFromActiveSpreadSheet(
+    var rangeData = this.GetRangeValuesFromActiveSpreadSheet(
       rowStart == null ? sheetRowColumnDetails.firstRow : rowStart,
       columnIndex == null ? sheetRowColumnDetails.firstColumn : columnIndex,
       rowEnd == null ? sheetRowColumnDetails.lastRow : rowEnd,
@@ -104,22 +115,36 @@ class Library {
   }
 
   static GetCellValue(rowNumber = null, columnNumber = null) {
-    return new Promise(function (resolve, reject) {
 
       var sheetRowColumnDetails = this.GetSheetRowColumnDetails();
 
-      var rangeData = this.GetRangeFromActiveSpreadSheet(
+      var rangeData = this.GetRangeValuesFromActiveSpreadSheet(
         rowNumber == null ? sheetRowColumnDetails.firstRow : rowNumber,
         columnNumber == null ? sheetRowColumnDetails.firstColumn : columnNumber,
         rowNumber == null ? sheetRowColumnDetails.firstRow : rowNumber,
         columnNumber == null ? sheetRowColumnDetails.firstColumn : columnNumber,
       );
 
-      resolve(rows[0][0]);
-    });
+      return rangeData[0][0];
+    }
   }
 
-}
+  // static SetCellValue(rowNumber = null, columnNumber = null) {
+
+  //   var sheetRowColumnDetails = this.GetSheetRowColumnDetails();
+
+  //   var rangeData = this.GetRangeFromActiveSpreadSheet(
+  //     rowNumber == null ? sheetRowColumnDetails.firstRow : rowNumber,
+  //     columnNumber == null ? sheetRowColumnDetails.firstColumn : columnNumber,
+  //     rowNumber == null ? sheetRowColumnDetails.firstRow : rowNumber,
+  //     columnNumber == null ? sheetRowColumnDetails.firstColumn : columnNumber,
+  //   );
+
+  //   return rangeData[0][0];
+  // }
+//}
+
+//}
 
 
 

@@ -60,10 +60,19 @@ SpreadsheetApp.getUi().showModalDialog(htmlOutput, 'My add-on');
 
 function onEdit(e) {
   try{
-    var sheet = new Sheet(e);
+    var sheet = new MemberSheet(e);
 
-    /* lets check for event validation to generate payment links */
-    sheet.ValidateEventToGeneratePaymentLinks();
+    /* lets check for event validation before generate payment links */
+    var isValidEvent = sheet.ValidateEventToGeneratePaymentLinks();
+
+    if(!isValidEvent)
+    {
+      return;
+    }
+
+    sheet.GeneratePaymentLinks();
+
+
 } catch (error) {
   Library.Alert(error.message);
 }
