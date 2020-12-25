@@ -11,5 +11,21 @@ var AppConfig =
         Status: { header: "Status", index: 3 }
     },
 
-    GenerateReceiptApi: "http://localhost:3000/receipt?payerMemberId={payerMemberId}&payeeMemberId={payeeMemberId}&amount={amount}"
+    /* PAYMENT PATTENRNS */
+    PaymentPattern :
+    {
+        FirstDue : { amount : 100, validityInDays : 30},
+        SecondDue : { amount : 125, validityInDays : 30},
+        ThirdDue : { amount : 150, validityInDays : 30}
+    },
+
+    /* PAYMENT METHODS */
+    PaymentMethod :
+    {
+        Online: "Online",
+        Cash: "Cash",
+        Cheque:  "Cheque"
+    },
+
+    GenerateReceiptApi: "https://hardikraval.herokuapp.com/receipt?payerMemberId={payerMemberId}&payeeMemberId={payeeMemberId}&amount={amount}&Method={paymentMethod}"
 }

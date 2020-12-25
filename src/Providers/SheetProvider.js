@@ -1,10 +1,15 @@
 class SheetProvider {
-    IdentifySheet(event) {
+    // todo: review
+    constructor(event) {
+        // todo: review
+        this.event = event;
+    }
+    IdentifySheet() {
 
-        if (!event)
+        if (!this.event)
             return null;
 
-        var sheetNameInEvent = event
+        var sheetNameInEvent = this.event
             .source
             .getActiveSheet()
             .getSheetName();
@@ -13,7 +18,7 @@ class SheetProvider {
             return null;
 
         var sheetDocumentKey = Object.keys(SheetDcoument)
-            .filter(key => Library.AreStringsEqual(SheetDcoument[key], sheetNameInEvent));
+            .filter(key => DataProvider.AreStringsEqual(SheetDcoument[key], sheetNameInEvent));
 
         if (!sheetDocumentKey)
             return null;

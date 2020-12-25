@@ -1,7 +1,7 @@
 class TransactionLogSheet 
 {
     constructor() {
-      this.activeSheet = Library.GetSheetByName('TransactionLog');
+      this.activeSheet = DataProvider.GetSheetByName('TransactionLog');
     }
   
     CreateLog(receiptNumber,payerMemberId, payer, payeeMemberId,payee,amount,paidOn)

@@ -7,7 +7,7 @@ function doGet(request) {
 
     let paidOn = Utility.GetCurrentDateTime();
 
-    var allMemberRows = Library.GetRowObjectsByColumns();
+    var allMemberRows = DataProvider.GetRowObjectsByColumns();
 
     var payerMemeber = allMemberRows.filter(row => row[0] == payerMemberId)[0];
     var payeeMemeber = allMemberRows.filter(row => row[0] == payeeMemberId)[0];

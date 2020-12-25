@@ -7,56 +7,50 @@ var eventStartingColumn = 5;
 
 // Add a custom menu to the active spreadsheet, including a separator and a sub-menu.
 function onOpen(e) {
-  Library.Alert("Make sure to active script before going ahead!");
+  DataProvider.Alert("Make sure to active script before going ahead!");
 
   SpreadsheetApp.getUi()
-      .createMenu('AABS')
-      .addItem('Activate - Script', 'ActiveScript')
-      .addToUi();
+    .createMenu('AABS')
+    .addItem('Activate - Script', 'ActiveScript')
+    .addToUi();
 }
 
-function ActiveScript()
-{
- Library.Toast("Your script is activated!");
+function ActiveScript() {
+  DataProvider.Toast("Your script is activated!");
 }
 
 function onEdit(e) {
-  try{
-  
-  var sheet =  new SheetProvider()
-    .IdentifySheet(e);
-  
-    var sheet = new MemberSheet(e);
+  try {
 
-    /* lets check for event validation before generate payment links */
-    var isValidEvent = sheet.ValidateEventToGeneratePaymentLinks();
+    var eventProvider = new EventProvider(e);
 
-    if(!isValidEvent)
-    {
-      return;
+    if (!eventProvider.sheetEvent) return null;
+
+    switch (eventProvider.sheetEvent) {
+      case SheetEvent.GENERATEPAYMENTLINKS:
+        HandleGeneratePaymentLinks(eventProvider)
+        break;
+
+      default:
+        break;
     }
-
-    sheet.GeneratePaymentLinks();
-
-
-} catch (error) {
-  Library.Alert(error.message);
+  }
+  catch (error) {
+    DataProvider.Alert(error.message);
+  }
 }
-  
-  // TODO:
-  // ValidateEventToGeneratePaymentLinks
-  // GeneratePaymentLinks
 
-  
-   
+function HandleGeneratePaymentLinks(eventProvider) {
 
-// remove value if not accepted memberid on first row(last column only).
-// dont create payment links for middle column change in first row
-// make sure the edited column of first row should be the valid last column of the first row.
- 
-  //var oldValue = e.oldValue;
-  //generatePaymentLinks(e);
+  var payeeMemberId = eventProvider.activeCell.getValue();
+  var memberSheetColumnNumber = eventProvider.activeCell.getColumn();
+  var memberSheet = new MemberSheet();
 
-  //SpreadsheetApp.getActive().toast(oldValue + "Script2 activated.");
+  /* lets check for event validation before generate payment links */
+  var isValidEvent = memberSheet.ValidateEventToGeneratePaymentLinks(eventProvider);
+
+  if (!isValidEvent) return;
+
+  memberSheet.GeneratePaymentLinks(payeeMemberId,memberSheetColumnNumber);
 }
 

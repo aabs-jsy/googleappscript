@@ -1,6 +1,6 @@
 class Member {
   constructor() {
-    this.activeSheet = Library.GetSheetByName('Members');
+    this.activeSheet = DataProvider.GetSheetByName('Members');
   }
 
   MakePayment(payerMemberId, payeeMemberId, paidOn)
