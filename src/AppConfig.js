@@ -6,9 +6,11 @@ var AppConfig =
     /* SHEET COLUMNS NAMES */
     SheetColumnHeaderAndIndexes :
     {
-        MemberId: { header: "MemberId", index: 1 },
-        MemberName: { header: "MemberName", index: 2 },
-        Status: { header: "Status", index: 3 }
+        MemberSheet: {
+            MemberId: { header: "MemberId", index: 0 },
+            MemberName: { header: "MemberName", index: 1 },
+            Status: { header: "Status", index: 2 }
+        }
     },
 
     /* PAYMENT PATTENRNS */

@@ -1,20 +1,25 @@
 class Member {
   constructor() {
-    this.activeSheet = DataProvider.GetSheetByName('Members');
+    this.sheet = DataProvider.GetSheetByName(SheetDcoument.MEMBERS);
   }
 
-  MakePayment(payerMemberId, payeeMemberId, paidOn)
+  MakePayment(payerMemberId, payeeMemberId, generatedOn)
   { 
     let payerMemberIdRowNumber = new MemberSheet().GetRowNumberByMemberId(payerMemberId);
     let ExpiredPayeeMemberIdColumnNumber = new MemberSheet().GetColumnNumberByExpiredMemberId(payeeMemberId);
     
-   this.activeSheet.getRange(payerMemberIdRowNumber,ExpiredPayeeMemberIdColumnNumber).setValue(paidOn);
+    console.log(payerMemberIdRowNumber +'  ----  '+ ExpiredPayeeMemberIdColumnNumber)
+
+   this.sheet.getRange(payerMemberIdRowNumber,ExpiredPayeeMemberIdColumnNumber).setValue(generatedOn);
    
   }
 
-  SetExpired()
+  SetExpired(memberId)
   {
-
+     // get memberdata
+     // validate if memeber is already expired or not?
+     // set expired
+     // save
   }
 
 }

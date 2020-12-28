@@ -114,7 +114,7 @@ class DataProvider {
         
         rowItem = row;
         
-        sheetColumnHeaderAndIndexList.map((x => rowItem[x.header] = row[x.index]));
+        sheetColumnHeaderAndIndexList.map(x => rowItem[x.header] = row[x.index]);
         
         rows.push(rowItem);
       });

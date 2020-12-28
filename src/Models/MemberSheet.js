@@ -174,22 +174,25 @@ class MemberSheet {
                 .build();
     }
 
-    // GetRowNumberByMemberId(memberId) {
-    //     var allMemberRows = DataProvider.GetSignleColumnValuesToArray(this.sheet, 1);
+    GetRowNumberByMemberId(memberId) {
+        var allMemberRows = DataProvider.GetSignleColumnValuesToArray(this.sheet, 
+                        AppConfig.SheetColumnHeaderAndIndexes.MemberSheet.MemberId.index + 1);
 
-    //     if (!DataProvider.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
-    //         let foundIndex = allMemberRows.indexOf(memberId);
-    //         return (foundIndex == -1 ? foundIndex : (foundIndex + 2));
-    //     }
-    // }
+        if (!DataProvider.IsValueNullEmptyUndefied(allMemberRows) 
+                && allMemberRows.length > 0) 
+        {
+            let foundIndex = allMemberRows.indexOf(memberId);
+            return (foundIndex == -1 ? foundIndex : (foundIndex + 2));
+        }
+    }
 
-    // GetColumnNumberByExpiredMemberId(memberId) {
-    //     var allMemberRows = DataProvider.GetRowObjectsByColumns(this.sheet, 1);
+    GetColumnNumberByExpiredMemberId(memberId) {
+        var allMemberRows = DataProvider.GetRowObjectsByColumns(this.sheet, this.headerRowNumber);
 
-    //     if (!DataProvider.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
-    //         return (allMemberRows[0].indexOf(memberId) + 1);
-    //     }
+        if (!DataProvider.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
+            return (allMemberRows[0].indexOf(memberId) + 1);
+        }
 
-    //     return -1;
-    // }
+        return -1;
+    }
 }

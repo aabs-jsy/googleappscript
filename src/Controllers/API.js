@@ -1,51 +1,56 @@
-function doGet(request) {    
 
-    var payerMemberId =  request.parameters.payerMemberId;
-    var payeeMemberId =  request.parameters.payeeMemberId;
-    var receiptNumber =  request.parameters.receiptNumber.toString();
-    var amount =  request.parameters.amount.toString();
+function doGet(request) {   
+    let receipt = Helper.SanitizeApiParameters(request.parameters);
 
-    let paidOn = Utility.GetCurrentDateTime();
+    console.log(receipt);
 
-    var allMemberRows = DataProvider.GetRowObjectsByColumns();
+    var memberSheet = DataProvider.GetSheetByName(SheetDcoument.MEMBERS);
 
-    var payerMemeber = allMemberRows.filter(row => row[0] == payerMemberId)[0];
-    var payeeMemeber = allMemberRows.filter(row => row[0] == payeeMemberId)[0];
+    var allMemberRows = DataProvider.GetRowObjectsByColumns(memberSheet);
 
-    ReceiptCallBack(receiptNumber,payerMemeber[0],payerMemeber[1],payeeMemeber[0],payeeMemeber[1],amount,paidOn);
-    //ReceiptCallBack();
-    var data = 
-    {
-        payerMember: {
-            MemberId : payerMemeber[0], 
-            MemberName : payerMemeber[1]
-        },
-        payeeMemeber: {
-            MemberId : payeeMemeber[0], 
-            MemberName : payeeMemeber[1]
-        }
-    }
+    var payerMember = allMemberRows.filter(row => row[AppConfig.SheetColumnHeaderAndIndexes.MemberSheet.MemberId.header] == receipt.payerMemberId)[0];
+    var payeeMember = allMemberRows.filter(row => row[AppConfig.SheetColumnHeaderAndIndexes.MemberSheet.MemberId.header] == receipt.payeeMemberId)[0];
 
-   
-    
-   // return ContentService.createTextOutput(request.parameters.payeeMemberId);
-    return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON); 
+    // var data = 
+    // {
+    //     payerMember: {
+    //         MemberId : payerMemeber[AppConfig.SheetColumnHeaderAndIndexes.MemberSheet.MemberId.header], 
+    //         MemberName : payerMemeber[AppConfig.SheetColumnHeaderAndIndexes.MemberSheet.MemberName.header],
+    //         Phone : 
+    //     },
+    //     payeeMemeber: {
+    //         MemberId : payeeMemeber[AppConfig.SheetColumnHeaderAndIndexes.MemberSheet.MemberId.header], 
+    //         MemberName : payeeMemeber[AppConfig.SheetColumnHeaderAndIndexes.MemberSheet.MemberName.header]
+    //     }
     // }
+
+    var data = {
+        payeeMember : Utility.PurageObjectHavingArrayIndcluded(payeeMember), 
+        payerMember : Utility.PurageObjectHavingArrayIndcluded(payerMember) 
+    };
+
+    receipt.payerMemberName = data.payerMember.MemberName;
+    receipt.payeeMemberName = data.payeeMember.MemberName;
+
+    ReceiptCallBack(receipt);
+
+    return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON); 
    }
 
-   function ReceiptCallBack(receiptNumber,payerMemberId, payerName, payeeMemberId,payeeName,amount,paidOn)
-  // function ReceiptCallBack()
-    { /*
-        let receiptNumber = '111'
-        let payerMemberId = "M3"
-        let payerName = "Xyz"
-        let payeeMemberId ="M9"
-        let payeeName = "VWX"
-        let amount = 100
-        let paidOn = Utility.GetCurrentDateTime();
-*/
-        new Member().MakePayment(payerMemberId,payeeMemberId,paidOn);
-        new TransactionLogSheet().CreateLog(receiptNumber,payerMemberId,payerName,payeeMemberId,payeeName,amount,paidOn);
+   function ReceiptCallBack(receipt)
+    { 
+        new Member().MakePayment(receipt.payerMemberId,
+            receipt.payeeMemberId,
+            receipt.generatedOn);
+
+        new TransactionLogSheet().CreateLog(receipt.receiptNumber,
+            receipt.payerMemberId,
+            receipt.payerMemberName,
+            receipt.payeeMemberId,
+            receipt.payeeMemberName,
+            receipt.amount,
+            receipt.generatedOn);
+
         return;
     }
    

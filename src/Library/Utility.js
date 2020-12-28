@@ -13,4 +13,16 @@ static ObjectPropertiesToList(object) {
     
     return propertyList;
     }
+
+static PurageObjectHavingArrayIndcluded(object) {
+   
+   var returnObject = {};
+
+    for (var key in object) 
+    {
+       returnObject[key] = object[key];
+    }
+    
+    return returnObject;
+    }
 }

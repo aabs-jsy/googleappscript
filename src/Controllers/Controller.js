@@ -42,15 +42,21 @@ function onEdit(e) {
 
 function HandleGeneratePaymentLinks(eventProvider) {
 
-  var payeeMemberId = eventProvider.activeCell.getValue();
-  var memberSheetColumnNumber = eventProvider.activeCell.getColumn();
-  var memberSheet = new MemberSheet();
+  try {
+    var payeeMemberId = eventProvider.activeCell.getValue();
+    var memberSheetColumnNumber = eventProvider.activeCell.getColumn();
+    var memberSheet = new MemberSheet();
 
-  /* lets check for event validation before generate payment links */
-  var isValidEvent = memberSheet.ValidateEventToGeneratePaymentLinks(eventProvider);
+    /* lets check for event validation before generate payment links */
+    var isValidEvent = memberSheet.ValidateEventToGeneratePaymentLinks(eventProvider);
 
-  if (!isValidEvent) return;
+    if (!isValidEvent) return;
 
-  memberSheet.GeneratePaymentLinks(payeeMemberId,memberSheetColumnNumber);
+    memberSheet.GeneratePaymentLinks(payeeMemberId, memberSheetColumnNumber);
+  }
+  catch (error) {
+    DataProvider.Alert(error.message);
+  }
+
 }
 
