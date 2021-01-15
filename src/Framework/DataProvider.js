@@ -121,6 +121,21 @@ class DataProvider {
       
       return rows;
     }
+
+  static SetCellValue(sheet, value, rowNumber = null, columnNumber = null) {
+
+    var sheetRowColumnDetails = this.GetSheetRowColumnDetails();
+
+    var range = this.GetRangeFromSpreadSheet(
+      sheet,
+      rowNumber == null ? sheetRowColumnDetails.firstRow : rowNumber,
+      columnNumber == null ? sheetRowColumnDetails.firstColumn : columnNumber,
+      1,
+      1
+      );
+      
+      return range.setValue(value);
+    } 
       
       
   static Toast(message) {

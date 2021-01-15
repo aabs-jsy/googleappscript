@@ -52,11 +52,31 @@ function HandleGeneratePaymentLinks(eventProvider) {
 
     if (!isValidEvent) return;
 
-    memberSheet.GeneratePaymentLinks(payeeMemberId, memberSheetColumnNumber);
+    new Member().SetExpired(payeeMemberId); 
+    memberSheet.GeneratePaymentLinks(payeeMemberId, memberSheetColumnNumber, AppConfig.PaymentPattern.FirstDue);
+
   }
   catch (error) {
     DataProvider.Alert(error.message);
   }
-
 }
 
+function RefreshDueIterance()
+{
+  // find members having expirydays 30
+  // set payment links for new due interance
+  new MemberSheet().RefreshDueIterance();
+  new MemberSheet().RefreshDueElimination();
+}
+
+function SendPaymentReminder()
+{
+  new MemberSheet().SendPaymentReminder();
+}
+
+async function textMessage()
+{
+  Helper.SendMessage();
+
+  console.log('done')
+}

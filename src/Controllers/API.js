@@ -31,6 +31,8 @@ function doGet(request) {
 
     receipt.payerMemberName = data.payerMember.MemberName;
     receipt.payeeMemberName = data.payeeMember.MemberName;
+    receipt.payerMemeberPhone = data.payerMember.Phone;
+    receipt.payerMemeberEmail = data.payerMember.Email;
 
     ReceiptCallBack(receipt);
 
@@ -50,6 +52,12 @@ function doGet(request) {
             receipt.payeeMemberName,
             receipt.amount,
             receipt.generatedOn);
+        
+        let messageText = Helper.BuildReceiptMessage(receipt);
+        console.log(receipt);
+        console.log(messageText);
+
+        //     Helper.SendMessage(receipt.payerMemeberPhone, messageText)
 
         return;
     }

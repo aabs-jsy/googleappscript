@@ -4,7 +4,7 @@ class EventProvider {
         this.event = event;
         this.sheetName = this.IdentifySheet();
         this.eventSheet = DataProvider.GetSheetByName(this.sheetName);
-        this.activeCell = this.eventSheet.getActiveCell(); // todo: review
+        this.activeCell = this.eventSheet != null ? this.eventSheet.getActiveCell() : null; // todo: review
         this.sheetEvent = this.IdentifySheetEvent();
         this.oldValue = this.event.oldValue;
     }
@@ -36,6 +36,8 @@ class EventProvider {
         if (DataProvider.IsValueNullEmptyUndefied(this.sheetName)) return null;
 
         if (!this.event) return null;
+
+        if (!this.activeCell) return null;
 
         switch (this.sheetName) {
             case SheetDcoument.MEMBERS:
