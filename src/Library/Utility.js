@@ -1,4 +1,8 @@
 class Utility {
+    static IsValueNullEmptyUndefied(value) {
+        return (!value || value == null || value == '' || value == undefined);
+      }
+      
     static GetCurrentDateTime() {
         return Utilities.formatDate(new Date(), "GMT+05:30", "dd-MMM-yyyy hh:mm:ss a"); // "yyyy-MM-dd'T'HH:mm:ss'Z'"
     }
