@@ -34,5 +34,6 @@ var AppConfig =
         Cheque:  "Cheque"
     },
 
-    GenerateReceiptApi: "https://hardikraval.herokuapp.com/receipt?payerMemberId={payerMemberId}&payeeMemberId={payeeMemberId}&amount={amount}&Method={paymentMethod}"
+    //GenerateReceiptApi: "https://hardikraval.herokuapp.com/receipt?payerMemberId={payerMemberId}&payeeMemberId={payeeMemberId}&amount={amount}&Method={paymentMethod}"
+    GenerateReceiptApi: "https://hardikraval.herokuapp.com" 
 }

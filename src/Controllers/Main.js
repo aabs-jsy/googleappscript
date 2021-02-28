@@ -1,37 +1,74 @@
-function tableClassQuickstart() {
-    // Let's create a table and search for Philippe.
-//     var sheetName = 'Members';
-//     var headerRow = 1;
-//     var table = Sheetfu.getTable(sheetName, headerRow);       
-//     var item = table.select([{"MemberId": "M200"}]).first();
-    
-//     // get values, notes, etc..
-//     var Status = item.getFieldValue("Status");  // 36
-//    // var ageNote = item.getFieldNote("age");
-//    // var ageBackground = item.getFieldBackground("age");
-    
-//      //More importantly, we can set values, colors, notes.
-//      item.setFieldNote("Status", "His birthday is coming soon")  
-//          .setFieldValue("Status", 37) 
-//          .setFieldBackground("Status", "light red")  
-//     // .commit()  
-//          Status = item.getFieldValue("Status");  // 36
-    
-//     DataProvider.Alert(Status);
-//     item.commit();
-//     console.log(table.header);
-//     return '';
+// Add a custom menu to the active spreadsheet, including a separator and a sub-menu.
+function onOpen(e) {
+  DataProvider.Alert("Make sure to active script From Menu 'AABS' before going ahead!");
 
-let members = Members.Get();
-console.log(members[0].MemberId.Value);
-
-members.forEach(x=>x.MemberId)
-
-members[0].MemberId = 38;// [null,'white','red'];
-members[0]._dataTableItem.commit();
-//console.log(members[0].MemberId.Value);
-
-let table = Sheetfu.getTable(SheetDcoument.MEMBERS, 1);
-table.commit();
-
+  SpreadsheetApp.getUi()
+    .createMenu('AABS')
+    .addItem('Activate - Script', 'ActiveScript')
+    .addItem('Create Receipt', 'AcceptPaymentRequest')
+    .addToUi();
 }
+
+function ActiveScript() 
+{
+  DataProvider.Toast("Your script is activated!");
+}
+
+function AcceptPaymentRequest() 
+{
+  let eventProvider = new EventProvider();
+
+    if(eventProvider.sheetEvent == SheetEvent.ACCEPTPAYMENT)
+    {
+      let sheetProvider = new SheetProvider(eventProvider.eventSheet);
+
+      let PayerMemberId = sheetProvider.GetRowByNumber(eventProvider.activeCell.getRow())[SheetColumnHeaderAndIndexes.MemberSheet.Columns.MemberId.index];
+      let PayeeMemberId = sheetProvider.GetColumnHeaderByNumber(eventProvider.activeCell.getColumn());
+      let Amount = eventProvider.activeCell.getValue().replace('Pay ','').toString();
+      let ReceiptCreator = Session.getEffectiveUser().getEmail();
+
+      new PaymentHandler(new UnitOfWork())
+      .HandlePaymentRequest(PayerMemberId, PayeeMemberId, Amount, ReceiptCreator);
+    }
+  }
+
+function AcceptPayment(payerMemberId,payerMemberName, payeeMemberId, payeeMemberName, Amount, ReceiptCreator, paymentMode, reference) 
+{
+    new PaymentHandler(new UnitOfWork())
+    .HandlePayment(payerMemberId,payerMemberName, payeeMemberId, payeeMemberName, Amount, ReceiptCreator, paymentMode, reference);
+}
+  
+function onEdit(e) 
+{
+  try {
+
+    var eventProvider = new EventProvider(e);
+
+    if (!eventProvider.sheetEvent) return null;
+
+    switch (eventProvider.sheetEvent) {
+      case SheetEvent.GENERATEPAYMENTLINKS:
+        new MemberHandler(new UnitOfWork()).HandleExpiry(eventProvider)
+        break;
+
+      default:
+        break;
+    }
+  }
+  catch (error) {
+    DataProvider.Alert(error.message);
+  }
+}
+
+function RefreshPaymentLinks()
+{
+  new PaymentHandler(new UnitOfWork())
+  .HandleRefreshPaymentLinks(); 
+}
+
+function RefreshElimination()
+{
+  new PaymentHandler(new UnitOfWork())
+  .HandlerElimination(); 
+}
+

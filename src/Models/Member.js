@@ -28,11 +28,11 @@ class Member {
       var payerMember = allMemberRows
         .filter(row => row[AppConfig.SheetColumnHeaderAndIndexes.MemberSheet.MemberId.header] == memberId)[0];
 
-      if (payerMember.Status != MemberStatus.ACTIVE) {
+      if (payerMember.Status != MemberStatus.ACTIVE.StatusName) {
         throw new Error(ErrorCodes.ERRORCODE1001.Code);
       }
 
-      payerMember.Status = MemberStatus.EXPIRED;
+      payerMember.Status = MemberStatus.EXPIRED.StatusName;
       payerMember.ExpiredOn = Utility.GetCurrentDateTime();
 
       this.UpdateMember(payerMember)
@@ -56,9 +56,9 @@ class Member {
       var payerMember = allMemberRows
         .filter(row => row[AppConfig.SheetColumnHeaderAndIndexes.MemberSheet.MemberId.header] == payerMemberId)[0];
 
-      if (payerMember.Status != MemberStatus.ACTIVE && payerMember.Status != MemberStatus.PENDING) return false;
+      if (payerMember.Status != MemberStatus.ACTIVE.StatusName && payerMember.Status != MemberStatus.PENDING.StatusName) return false;
 
-      payerMember.Status = MemberStatus.ELIMINATED;
+      payerMember.Status = MemberStatus.ELIMINATED.StatusName;
       payerMember.EliminatedOn = Utility.GetCurrentDateTime();
 
       //let eliminatedByPayeeMemberColumnNumber = memberSheet.GetColumnNumberByExpiredMemberId(eliminatedByPayeeMemberId);

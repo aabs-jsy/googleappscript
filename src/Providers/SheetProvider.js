@@ -1,29 +1,27 @@
 class SheetProvider {
     // todo: review
-    constructor(event) {
+    constructor(sheet) {
         // todo: review
-        this.event = event;
+        this.sheet = sheet
     }
-    IdentifySheet() {
+    
+    GetRowByNumber(rowNumber)
+    {
+        let rows = DataProvider.GetRowObjectsByColumns(this.sheet, rowNumber, 1);
 
-        if (!this.event)
-            return null;
+        return rows ? rows[0] : null;
+    }    
+    
+    GetColumnHeaderByNumber(columnNumber)
+    {
+        var column = DataProvider.GetSignleColumnValuesToArray(this.sheet, columnNumber, 1, 1);
 
-        var sheetNameInEvent = this.event
-            .source
-            .getActiveSheet()
-            .getSheetName();
+        if(column)
+        {
+            return column[0];
+        }
 
-        if (!sheetNameInEvent)
-            return null;
-
-        var sheetDocumentKey = Object.keys(SheetDcoument)
-            .filter(key => DataProvider.AreStringsEqual(SheetDcoument[key], sheetNameInEvent));
-
-        if (!sheetDocumentKey)
-            return null;
-
-        return SheetDcoument[sheetDocumentKey];
+        return null;
     }
 }
 

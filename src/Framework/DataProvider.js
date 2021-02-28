@@ -160,7 +160,7 @@ class DataProvider {
   }
 
   static AreStringsEqual(string1, string2) {
-    return (string1.localeCompare(string2) == 0);
+    return (string1.toString().localeCompare(string2.toString()) == 0);
   }
 }
     
