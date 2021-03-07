@@ -7,14 +7,14 @@ class SheetProvider {
     
     GetRowByNumber(rowNumber)
     {
-        let rows = DataProvider.GetRowObjectsByColumns(this.sheet, rowNumber, 1);
+        let rows = GoogleScriptHelper.GetRowObjectsByColumns(this.sheet, rowNumber, 1);
 
         return rows ? rows[0] : null;
     }    
     
     GetColumnHeaderByNumber(columnNumber)
     {
-        var column = DataProvider.GetSignleColumnValuesToArray(this.sheet, columnNumber, 1, 1);
+        var column = GoogleScriptHelper.GetSignleColumnValuesToArray(this.sheet, columnNumber, 1, 1);
 
         if(column)
         {

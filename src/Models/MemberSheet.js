@@ -1,7 +1,7 @@
 class MemberSheet {
 
     constructor() {
-        this.sheet = DataProvider.GetSheetByName(SheetDcoument.MEMBERS);
+        this.sheet = GoogleScriptHelper.GetSheetByName(SheetDcoument.MEMBERS);
         this.lastColumnNumber = this.sheet.getLastColumn();
         this.lastRowNumber = this.sheet.getLastRow();
         this.headerRowNumber = 1;
@@ -13,8 +13,8 @@ class MemberSheet {
             return false;
         }
 
-        let editedCellOldValue = DataProvider.SetNullToBank(eveventProviderent.oldValue);
-        let editedCellNewValue = DataProvider.SetNullToBank(eveventProviderent.activeCell.getValue());
+        let editedCellOldValue = Utility.SetNullToBank(eveventProviderent.oldValue);
+        let editedCellNewValue = Utility.SetNullToBank(eveventProviderent.activeCell.getValue());
 
         // value must be pasted to header row (apply valiadtion only for the first row)
         if (eveventProviderent.activeCell.getRow() != this.headerRowNumber) {
@@ -22,30 +22,30 @@ class MemberSheet {
         }
 
         /*  LET'S CHECK AND PREVENT COPY-PASTED MEMEBERID */
-        if (DataProvider.IsValueNullEmptyUndefied(eveventProviderent.event.value)) {
+        if (Utility.IsValueNullEmptyUndefied(eveventProviderent.event.value)) {
             eveventProviderent.activeCell.setValue(editedCellOldValue);
             throw new Error("Keyboard short cuts (for example: Copy and paste or delete) are not allowed, please type Member-Id properly in the cell. System will reject his input.");
         }
 
         /* TODO: EDITED CELL OLD VALUE MUST BE BLANK */
-        if (!DataProvider.IsValueNullEmptyUndefied(eveventProviderent.event.oldValue)) {
+        if (!Utility.IsValueNullEmptyUndefied(eveventProviderent.event.oldValue)) {
             eveventProviderent.activeCell.setValue(editedCellOldValue);
             throw new Error("The was not blank before edit, which invalid Event! System will reject this input.");
         }
 
         /* LETS CHECK PATTERN OF MEMBERID */
-        if (!DataProvider.MatchWithRegx(editedCellNewValue, AppConfig.MemberIdRegx)) {
+        if (!Utility.MatchWithRegx(editedCellNewValue, AppConfig.MemberIdRegx)) {
             eveventProviderent.activeCell.setValue('');
             throw new Error("Invalid MemberId pasted! System will reject this input.");
         }
 
         /* MEMBERID MUST MATCH WITH THE FIRST COULMN (MEMBERID COLUMN) */
-        var allMemberRows = DataProvider.GetRowObjectsByColumns(this.sheet);
+        var allMemberRows = GoogleScriptHelper.GetRowObjectsByColumns(this.sheet);
 
-        if (!DataProvider.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
+        if (!Utility.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
             if (allMemberRows.filter((row) => {
-                return DataProvider.AreStringsEqual(row.MemberId, editedCellNewValue)
-                    && DataProvider.AreStringsEqual(row.Status, MemberStatus.ACTIVE)
+                return Utility.AreStringsEqual(row.MemberId, editedCellNewValue)
+                    && Utility.AreStringsEqual(row.Status, MemberStatus.ACTIVE)
             }).length == 0) {
                 eveventProviderent.activeCell.setValue('');
                 throw new Error("Member-Id પ્રથમ કોલમ અને સક્રિય સભ્ય સાથે મેળ ખાતી હોવી જોઈએ! સિસ્ટમ આ ઇનપુટને Reject કરશે.");
@@ -59,10 +59,10 @@ class MemberSheet {
         }
 
         /* make sure the edited column of first row should be the valid last column of the first row. */
-        allMemberRows = DataProvider.GetRowObjectsByColumns(this.sheet, 1, 1);
+        allMemberRows = GoogleScriptHelper.GetRowObjectsByColumns(this.sheet, 1, 1);
 
-        if (!DataProvider.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
-            if (allMemberRows[0].filter((rowValue) => { return DataProvider.IsValueNullEmptyUndefied(rowValue) }).length > 0) {
+        if (!Utility.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
+            if (allMemberRows[0].filter((rowValue) => { return Utility.IsValueNullEmptyUndefied(rowValue) }).length > 0) {
                 eveventProviderent.activeCell.setValue('');
                 throw new Error("You can not leave any cell blank on the header row! System will reject this input.");
             }
@@ -86,15 +86,15 @@ class MemberSheet {
     }
 
     GeneratePaymentLinks(payeeMemberId, columnNumber, dueIterance) {
-        var allMemberRows = DataProvider.GetRowObjectsByColumns(this.sheet, 2, this.lastRowNumber - 1);
+        var allMemberRows = GoogleScriptHelper.GetRowObjectsByColumns(this.sheet, 2, this.lastRowNumber - 1);
         let payeeMember = new Member().GetMemberById(payeeMemberId);
 
-        if (!DataProvider.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
+        if (!Utility.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
 
             allMemberRows.forEach(
                 (row, index) => {
 
-                    var range = DataProvider.GetRangeFromSpreadSheet(
+                    var range = GoogleScriptHelper.GetRangeFromSpreadSheet(
                         this.sheet,
                         index + 2,
                         columnNumber,
@@ -104,7 +104,7 @@ class MemberSheet {
                     // do not change if cell is already set as 'expired' or 'eliminated'    
                     if (dueIterance.isFirstStage == false) {
                         if (range != null 
-                            && !DataProvider.IsValueNullEmptyUndefied(range.getValue()) 
+                            && !Utility.IsValueNullEmptyUndefied(range.getValue()) 
                             && range.getValue().toString().substring(0, 3) != 'Pay') 
                             return;
                     }
@@ -112,7 +112,7 @@ class MemberSheet {
                     // if payer is joined after respective payee is expired
                     if (dueIterance.isFirstStage == false) {
                         if (range != null 
-                            && DataProvider.IsValueNullEmptyUndefied(range.getValue())
+                            && Utility.IsValueNullEmptyUndefied(range.getValue())
                             ) 
                             {
                                 range.setValue('N/A')
@@ -185,14 +185,14 @@ class MemberSheet {
     GenerateElimination(payeeMemberId) 
     {
         var payeeMembercolumnNumber = this.GetColumnNumberByExpiredMemberId(payeeMemberId);
-        var allMemberRows = DataProvider.GetRowObjectsByColumns(this.sheet, 2, this.lastRowNumber - 1);
+        var allMemberRows = GoogleScriptHelper.GetRowObjectsByColumns(this.sheet, 2, this.lastRowNumber - 1);
 
-        if (!DataProvider.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) 
+        if (!Utility.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) 
         {
             allMemberRows.forEach(
                 (row, index) => 
                 {
-                    if (!DataProvider.IsValueNullEmptyUndefied(row[payeeMemberId]) 
+                    if (!Utility.IsValueNullEmptyUndefied(row[payeeMemberId]) 
                         && row[payeeMemberId].toString().substring(0, 3) == 'Pay'
                         && row.Status == MemberStatus.ACTIVE) 
                     {
@@ -208,12 +208,12 @@ class MemberSheet {
     }
 
     RemovePaymentLinks(payeeMemberId, columnNumber) {
-        var allMemberRows = DataProvider.GetRowObjectsByColumns(this.sheet, 2, this.lastRowNumber - 1);
+        var allMemberRows = GoogleScriptHelper.GetRowObjectsByColumns(this.sheet, 2, this.lastRowNumber - 1);
 
-        if (!DataProvider.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
+        if (!Utility.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
             allMemberRows.forEach(
                 (row, index) => {
-                    DataProvider.GetRangeFromSpreadSheet(
+                    GoogleScriptHelper.GetRangeFromSpreadSheet(
                         this.sheet,
                         index + 2,
                         columnNumber,
@@ -226,20 +226,20 @@ class MemberSheet {
     }
 
     RefreshDueIterance() {
-        var allMemberRows = DataProvider.GetRowObjectsByColumns(this.sheet, 2, this.lastRowNumber - 1);
+        var allMemberRows = GoogleScriptHelper.GetRowObjectsByColumns(this.sheet, 2, this.lastRowNumber - 1);
         var duePatterns = Utility.ObjectPropertiesToList(AppConfig.PaymentPattern);
 
-        if (DataProvider.IsValueNullEmptyUndefied(allMemberRows) || allMemberRows.length <= 0) return;
+        if (Utility.IsValueNullEmptyUndefied(allMemberRows) || allMemberRows.length <= 0) return;
 
-        if (DataProvider.IsValueNullEmptyUndefied(duePatterns) || duePatterns.length <= 0) return;
+        if (Utility.IsValueNullEmptyUndefied(duePatterns) || duePatterns.length <= 0) return;
 
         duePatterns.forEach((duePattern, index) => {
-            if (DataProvider.IsValueNullEmptyUndefied(duePatterns[index + 1])) return;
+            if (Utility.IsValueNullEmptyUndefied(duePatterns[index + 1])) return;
 
-            let memberRowsInIterance = allMemberRows.filter(row => !DataProvider.IsValueNullEmptyUndefied(row.ExpiredOn)
+            let memberRowsInIterance = allMemberRows.filter(row => !Utility.IsValueNullEmptyUndefied(row.ExpiredOn)
                 && Utility.AreDateEqual(Utility.GetDateBeforeDays(duePattern.validityInDays + 1), row.ExpiredOn));
 
-            if (!DataProvider.IsValueNullEmptyUndefied(memberRowsInIterance) && memberRowsInIterance.length > 0) {
+            if (!Utility.IsValueNullEmptyUndefied(memberRowsInIterance) && memberRowsInIterance.length > 0) {
                 memberRowsInIterance.forEach(member => {
                     this.GeneratePaymentLinks(member.MemberId, this.GetColumnNumberByExpiredMemberId(member.MemberId), duePatterns[index + 1]);
                 });
@@ -248,21 +248,21 @@ class MemberSheet {
     }
 
     RefreshDueElimination() {
-        var allMemberRows = DataProvider.GetRowObjectsByColumns(this.sheet, 2, this.lastRowNumber - 1);
+        var allMemberRows = GoogleScriptHelper.GetRowObjectsByColumns(this.sheet, 2, this.lastRowNumber - 1);
         var duePatterns = Utility.ObjectPropertiesToList(AppConfig.PaymentPattern);
 
-        if (DataProvider.IsValueNullEmptyUndefied(allMemberRows) || allMemberRows.length <= 0) return;
+        if (Utility.IsValueNullEmptyUndefied(allMemberRows) || allMemberRows.length <= 0) return;
 
-        if (DataProvider.IsValueNullEmptyUndefied(duePatterns) || duePatterns.length <= 0) return;
+        if (Utility.IsValueNullEmptyUndefied(duePatterns) || duePatterns.length <= 0) return;
 
         let eliminationDuePattern = duePatterns.filter(duePattern => duePattern.isEliminationStage == true)[0];
 
         if(!eliminationDuePattern) return;
 
-        let memberRowsInIterance = allMemberRows.filter(row => !DataProvider.IsValueNullEmptyUndefied(row.ExpiredOn)
+        let memberRowsInIterance = allMemberRows.filter(row => !Utility.IsValueNullEmptyUndefied(row.ExpiredOn)
                 && Utility.AreDateEqual(Utility.GetDateBeforeDays(eliminationDuePattern.validityInDays + 1), row.ExpiredOn));
         
-        if (!DataProvider.IsValueNullEmptyUndefied(memberRowsInIterance) && memberRowsInIterance.length > 0) {
+        if (!Utility.IsValueNullEmptyUndefied(memberRowsInIterance) && memberRowsInIterance.length > 0) {
             memberRowsInIterance.forEach(payeeMember => 
             {
                 this.GenerateElimination(payeeMember.MemberId);
@@ -272,19 +272,19 @@ class MemberSheet {
 
     SendPaymentReminder()
     {
-        var allMemberRows = DataProvider.GetRowObjectsByColumns(this.sheet, 2, this.lastRowNumber - 1);
+        var allMemberRows = GoogleScriptHelper.GetRowObjectsByColumns(this.sheet, 2, this.lastRowNumber - 1);
         var duePatterns = Utility.ObjectPropertiesToList(AppConfig.PaymentPattern);
 
-        if (DataProvider.IsValueNullEmptyUndefied(allMemberRows) || allMemberRows.length <= 0) return;
+        if (Utility.IsValueNullEmptyUndefied(allMemberRows) || allMemberRows.length <= 0) return;
 
-        if (DataProvider.IsValueNullEmptyUndefied(duePatterns) || duePatterns.length <= 0) return;
+        if (Utility.IsValueNullEmptyUndefied(duePatterns) || duePatterns.length <= 0) return;
 
         duePatterns.forEach((duePattern, index) => 
         {
-            let memberRowsInIterance = allMemberRows.filter(row => !DataProvider.IsValueNullEmptyUndefied(row.ExpiredOn)
+            let memberRowsInIterance = allMemberRows.filter(row => !Utility.IsValueNullEmptyUndefied(row.ExpiredOn)
             && Utility.AreDateEqual(Utility.GetDateBeforeDays(duePattern.validityInDays - 8), row.ExpiredOn));
     
-            if (!DataProvider.IsValueNullEmptyUndefied(memberRowsInIterance) && memberRowsInIterance.length > 0) {
+            if (!Utility.IsValueNullEmptyUndefied(memberRowsInIterance) && memberRowsInIterance.length > 0) {
                 memberRowsInIterance.forEach(payeeMember => 
                 {
                     this.SendReminder(payeeMember, duePattern, duePatterns[index + 1] );
@@ -296,14 +296,14 @@ class MemberSheet {
     SendReminder(payeeMember, currentDuePattern, nextPattern ) 
     {
         var payeeMembercolumnNumber = this.GetColumnNumberByExpiredMemberId(payeeMember.MemberId);
-        var allMemberRows = DataProvider.GetRowObjectsByColumns(this.sheet, 2, this.lastRowNumber - 1);
+        var allMemberRows = GoogleScriptHelper.GetRowObjectsByColumns(this.sheet, 2, this.lastRowNumber - 1);
 
-        if (!DataProvider.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) 
+        if (!Utility.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) 
         {
             allMemberRows.forEach(
                 (row, index) => 
                 {
-                    var range = DataProvider.GetRangeFromSpreadSheet(
+                    var range = GoogleScriptHelper.GetRangeFromSpreadSheet(
                         this.sheet,
                         index + 2,
                         payeeMembercolumnNumber,
@@ -311,7 +311,7 @@ class MemberSheet {
                         1);                        
                     
                     if (range != null 
-                        && !DataProvider.IsValueNullEmptyUndefied(range.getValue()) 
+                        && !Utility.IsValueNullEmptyUndefied(range.getValue()) 
                         && range.getValue().toString().substring(0, 3) == 'Pay'
                         && row.Status == MemberStatus.ACTIVE) 
                     {
@@ -365,7 +365,7 @@ class MemberSheet {
     {
         let payerMemberIdRowNumber = this.GetRowNumberByMemberId(payerMemberId);
 
-        var range = DataProvider.GetRangeFromSpreadSheet(
+        var range = GoogleScriptHelper.GetRangeFromSpreadSheet(
             this.sheet,
             payerMemberIdRowNumber,
             1,
@@ -378,7 +378,7 @@ class MemberSheet {
     SetExpiredStyleOnMemberRow(payeeMemberId)
     {
         let payerMemberIdRowNumber = this.GetRowNumberByMemberId(payeeMemberId);
-        var range = DataProvider.GetRangeFromSpreadSheet(
+        var range = GoogleScriptHelper.GetRangeFromSpreadSheet(
             this.sheet,
             payerMemberIdRowNumber,
             1,
@@ -389,10 +389,10 @@ class MemberSheet {
     }
 
     GetRowNumberByMemberId(memberId) {
-        var allMemberRows = DataProvider.GetSignleColumnValuesToArray(this.sheet,
+        var allMemberRows = GoogleScriptHelper.GetSignleColumnValuesToArray(this.sheet,
             AppConfig.SheetColumnHeaderAndIndexes.MemberSheet.MemberId.index + 1);
 
-        if (!DataProvider.IsValueNullEmptyUndefied(allMemberRows)
+        if (!Utility.IsValueNullEmptyUndefied(allMemberRows)
             && allMemberRows.length > 0) {
             let foundIndex = allMemberRows.indexOf(memberId);
             return (foundIndex == -1 ? foundIndex : (foundIndex + 2));
@@ -400,9 +400,9 @@ class MemberSheet {
     }
 
     GetColumnNumberByExpiredMemberId(memberId) {
-        var allMemberRows = DataProvider.GetRowObjectsByColumns(this.sheet, this.headerRowNumber);
+        var allMemberRows = GoogleScriptHelper.GetRowObjectsByColumns(this.sheet, this.headerRowNumber);
 
-        if (!DataProvider.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
+        if (!Utility.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
             return (allMemberRows[0].indexOf(memberId) + 1);
         }
 
@@ -410,10 +410,10 @@ class MemberSheet {
     }
 
     GetRowObjectsByColumns(rowStart = this.headerRowNumber, numRows = null) {
-        return DataProvider.GetRowObjectsByColumns(this.sheet, rowStart, numRows);
+        return GoogleScriptHelper.GetRowObjectsByColumns(this.sheet, rowStart, numRows);
     }
 
     SetCellValue(value, rowNumber = null, columnNumber = null) {
-        DataProvider.SetCellValue(this.sheet, value, rowNumber, columnNumber);
+        GoogleScriptHelper.SetCellValue(this.sheet, value, rowNumber, columnNumber);
     }
 }

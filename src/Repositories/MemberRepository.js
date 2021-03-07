@@ -22,12 +22,12 @@ class MemberRepository
 
     GetById(Id) //review
     {
-        let header = SheetColumnHeaderAndIndexes.MemberSheet.Columns.MemberId.header;
+        let header = SheetColumnHeaderAndIndexes.MemberSheet.Columns.ReceiptNumber.header;
 
         let whereCondition = {}
         whereCondition[header] = Id;
         
-        return this.Get(whereCondition).first();
+        return this.Get().filter(x=> Utility.AreStringsEqual(x.getFieldValue(header) , Id))[0];
     }
 
     GetAllExpired() //review
@@ -35,7 +35,7 @@ class MemberRepository
         let header = SheetColumnHeaderAndIndexes.MemberSheet.Columns.ExpiredOn.header;
 
         return this.Get()
-        .filter((x)=> !DataProvider.IsValueNullEmptyUndefied(x.getFieldValue(header)));
+        .filter((x)=> !Utility.IsValueNullEmptyUndefied(x.getFieldValue(header)));
     }
 
     Add(member)
@@ -59,5 +59,16 @@ class MemberRepository
            // review
            // throw new Error(ErrorCodes.ERRORCODE1001);
         }
+    }
+
+    GetAsObject(sheetRowItem)
+    {
+        let fields = Utility.ObjectPropertiesToList(SheetColumnHeaderAndIndexes.MemberSheet.Columns)
+        let returnObject = {}  
+        
+        if(fields)     
+        fields.forEach((x)=> returnObject[x.header] = sheetRowItem.getFieldValue(x.header))
+
+        return returnObject;
     }
 }

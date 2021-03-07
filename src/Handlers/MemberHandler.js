@@ -30,8 +30,8 @@ class MemberHandler
             return false;
         }
 
-        let editedCellOldValue = DataProvider.SetNullToBank(eventProvider.oldValue);
-        let editedCellNewValue = DataProvider.SetNullToBank(eventProvider.activeCell.getValue());
+        let editedCellOldValue = Utility.SetNullToBank(eventProvider.oldValue);
+        let editedCellNewValue = Utility.SetNullToBank(eventProvider.activeCell.getValue());
 
         // value must be pasted to header row (apply valiadtion only for the first row)
         if (eventProvider.activeCell.getRow() != SheetColumnHeaderAndIndexes.MemberSheet.HeaderRownumber) {
@@ -39,19 +39,19 @@ class MemberHandler
         }
 
         /*  LET'S CHECK AND PREVENT COPY-PASTED MEMEBERID */
-        if (DataProvider.IsValueNullEmptyUndefied(eventProvider.event.value)) {
+        if (Utility.IsValueNullEmptyUndefied(eventProvider.event.value)) {
             eventProvider.activeCell.setValue(editedCellOldValue);
             throw new Error("Keyboard short cuts (for example: Copy and paste or delete) are not allowed, please type Member-Id properly in the cell. System will reject his input.");
         }
 
         /* TODO: EDITED CELL OLD VALUE MUST BE BLANK */
-        if (!DataProvider.IsValueNullEmptyUndefied(eventProvider.event.oldValue)) {
+        if (!Utility.IsValueNullEmptyUndefied(eventProvider.event.oldValue)) {
             eventProvider.activeCell.setValue(editedCellOldValue);
             throw new Error("The was not blank before edit, which invalid Event! System will reject this input.");
         }
 
         /* LETS CHECK PATTERN OF MEMBERID */
-        if (!DataProvider.MatchWithRegx(editedCellNewValue, AppConfig.MemberIdRegx)) {
+        if (!Utility.MatchWithRegx(editedCellNewValue, AppConfig.MemberIdRegx)) {
             eventProvider.activeCell.setValue('');
             throw new Error("Invalid MemberId pasted! System will reject this input.");
         }
@@ -59,10 +59,10 @@ class MemberHandler
         /* MEMBERID MUST MATCH WITH THE FIRST COULMN (MEMBERID COLUMN) */
         var allMemberSheetItemRows = this.unitOfWork.memberRepostitory.Get();
 
-        if (!DataProvider.IsValueNullEmptyUndefied(allMemberSheetItemRows) && allMemberSheetItemRows.length > 0) {
+        if (!Utility.IsValueNullEmptyUndefied(allMemberSheetItemRows) && allMemberSheetItemRows.length > 0) {
             if (allMemberSheetItemRows.filter((sheetItemRow) => {
-                return DataProvider.AreStringsEqual(sheetItemRow.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.MemberId.header), editedCellNewValue)
-                    && DataProvider.AreStringsEqual(sheetItemRow.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.Status.header), MemberStatus.ACTIVE.StatusName)
+                return Utility.AreStringsEqual(sheetItemRow.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.MemberId.header), editedCellNewValue)
+                    && Utility.AreStringsEqual(sheetItemRow.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.Status.header), MemberStatus.ACTIVE.StatusName)
             }).length == 0) {
                 eventProvider.activeCell.setValue(''); //review
                 throw new Error("Member-Id પ્રથમ કોલમ અને સક્રિય સભ્ય સાથે મેળ ખાતી હોવી જોઈએ! સિસ્ટમ આ ઇનપુટને Reject કરશે.");
@@ -79,9 +79,9 @@ class MemberHandler
         /* make sure the edited column of first row should be the valid last column of the first row. */
         let headerRow = this.unitOfWork.memberRepostitory.header;
 
-        if(!DataProvider.IsValueNullEmptyUndefied(headerRow) && headerRow.length > 0)
+        if(!Utility.IsValueNullEmptyUndefied(headerRow) && headerRow.length > 0)
         {            
-            if ( headerRow.filter((headerCoulumn)=> DataProvider.IsValueNullEmptyUndefied(headerCoulumn)).length > 0) {
+            if ( headerRow.filter((headerCoulumn)=> Utility.IsValueNullEmptyUndefied(headerCoulumn)).length > 0) {
                 eventProvider.activeCell.setValue('');
                 throw new Error("You can not leave any cell blank on the header row! System will reject this input.");
             }
@@ -102,5 +102,12 @@ class MemberHandler
         // reject input if there is no valid row-column combination of active area
         // think about ctrl+z, delete
 
+    }
+
+    TestScript()
+    {
+        var allMemberSheetItemRows = this.unitOfWork.memberRepostitory.Get();
+
+        return this.unitOfWork.memberRepostitory.GetAsObject(allMemberSheetItemRows[0])
     }
 }

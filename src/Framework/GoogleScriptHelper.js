@@ -1,4 +1,4 @@
-class DataProvider {
+class GoogleScriptHelper {
   static GetSheetByName(sheetName = null) 
   {
     return SpreadsheetApp
@@ -97,7 +97,7 @@ class DataProvider {
     
     var sheetRowColumnDetails = this.GetSheetRowColumnDetails(sheet);
     
-    var rangeData = DataProvider.GetRangeValuesFromSpreadSheet(
+    var rangeData = GoogleScriptHelper.GetRangeValuesFromSpreadSheet(
       sheet,
       rowStart == null ? sheetRowColumnDetails.firstRow : rowStart,
       sheetRowColumnDetails.firstColumn,
@@ -146,53 +146,9 @@ class DataProvider {
     SpreadsheetApp.getUi().alert(message);
   }
 
-  static IsValueNullEmptyUndefied(value) {
-    return (!value || value == null || value == '' || value == undefined);
-  }
 
-  static MatchWithRegx(stringValue, pattern) {
-    var regExp = new RegExp(pattern);
-    return regExp.test(stringValue);
-  }
+  
 
-  static SetNullToBank(value) {
-    return (this.IsValueNullEmptyUndefied(value) ? '' : value);
-  }
 
-  static AreStringsEqual(string1, string2) {
-    return (string1.toString().localeCompare(string2.toString()) == 0);
-  }
+  
 }
-    
-      // static SetCellValue(rowNumber = null, columnNumber = null) {
-        
-        //   var sheetRowColumnDetails = this.GetSheetRowColumnDetails();
-        
-        //   var rangeData = this.GetRangeFromActiveSpreadSheet(
-          //     rowNumber == null ? sheetRowColumnDetails.firstRow : rowNumber,
-          //     columnNumber == null ? sheetRowColumnDetails.firstColumn : columnNumber,
-          //     rowNumber == null ? sheetRowColumnDetails.firstRow : rowNumber,
-          //     columnNumber == null ? sheetRowColumnDetails.firstColumn : columnNumber,
-          //   );
-          
-          //   return rangeData[0][0];
-          // }
-          //}
-          
-          //}
-          
-          
-          
-          /*
-          function showDialog() {
-            
-            var ui = SpreadsheetApp.getUi();
-            // Display a modal dialog box with custom HtmlService content.
-  var htmlOutput = HtmlService
-    .createHtmlOutput('<img src=https://i.stack.imgur.com/AuqJU.gif>')
-    .setWidth(250)
-    .setHeight(300);
-  ui.showModalDialog(htmlOutput, 'Script Running');
-*/
-
-//}

@@ -1,6 +1,6 @@
 class Member {
   constructor() {
-    this.sheet = DataProvider.GetSheetByName(SheetDcoument.MEMBERS);
+    this.sheet = GoogleScriptHelper.GetSheetByName(SheetDcoument.MEMBERS);
   }
 
   MakePayment(payerMemberId, payeeMemberId, generatedOn) {
@@ -23,7 +23,7 @@ class Member {
 
     var allMemberRows = memberSheet.GetRowObjectsByColumns();
 
-    if (!DataProvider.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
+    if (!Utility.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
 
       var payerMember = allMemberRows
         .filter(row => row[AppConfig.SheetColumnHeaderAndIndexes.MemberSheet.MemberId.header] == memberId)[0];
@@ -51,7 +51,7 @@ class Member {
 
     var allMemberRows = memberSheet.GetRowObjectsByColumns();
 
-    if (!DataProvider.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
+    if (!Utility.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) {
 
       var payerMember = allMemberRows
         .filter(row => row[AppConfig.SheetColumnHeaderAndIndexes.MemberSheet.MemberId.header] == payerMemberId)[0];
@@ -129,7 +129,7 @@ class Member {
     var memberSheet = new MemberSheet();
     var allMemberRows = memberSheet.GetRowObjectsByColumns();
 
-    if (!DataProvider.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) 
+    if (!Utility.IsValueNullEmptyUndefied(allMemberRows) && allMemberRows.length > 0) 
     {
       return allMemberRows
         .filter(row => row[AppConfig.SheetColumnHeaderAndIndexes.MemberSheet.MemberId.header] == memberId)[0];

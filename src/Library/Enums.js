@@ -1,6 +1,6 @@
 const SheetDcoument = {
     MEMBERS: "Members2",
-    TRANSACTIONLOG: "TransactionLog2",
+    RECEIPTLOG: "receiptLog2",
     Settings: "Settings",
 };
 
@@ -22,7 +22,7 @@ const SheetDcoument = {
         },
         HeaderRownumber: 1
      },
-     TransactionLogSheet: 
+     ReceiptLogSheet: 
      {
         Columns: 
         {

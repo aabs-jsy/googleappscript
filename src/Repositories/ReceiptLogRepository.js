@@ -1,8 +1,8 @@
-class SettingRepository
+class ReceiptLogRepository
 {
     constructor()
     {
-        this._table = getTable(SheetDcoument.Settings, 1) ;
+        this._table = getTable(SheetDcoument.RECEIPTLOG, 1) ;
         this.LastColumnNumber =  this._table.header.length;
         this.HeaderColumn = this._table.header;
     }
@@ -19,9 +19,10 @@ class SettingRepository
             return this._table.items;
         }
     }
+
     GetById(Id) //review
     {
-        let header = SheetColumnHeaderAndIndexes.SettingsSheet.Columns.ReceiptNumber.header;
+        let header = SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.ReceiptNumber.header;
 
         let whereCondition = {}
         whereCondition[header] = Id;
@@ -31,13 +32,17 @@ class SettingRepository
 
     Add(member)
     {
-        this._table.Add(member);
+        console.log(member);
+        var table = getTable(SheetDcoument.RECEIPTLOG, 1);
+        table.add(member);
+        table.commit();
     }
+
     GetAsObject(sheetRowItem)
     {
-        let fields = Utility.ObjectPropertiesToList(SheetColumnHeaderAndIndexes.SettingsSheet.Columns)
-        let returnObject = {}     
-        
+        let fields = Utility.ObjectPropertiesToList(SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns)
+        let returnObject = {}       
+
         if(fields)
         fields.forEach((x)=> returnObject[x.header] = sheetRowItem.getFieldValue(x.header))
 
