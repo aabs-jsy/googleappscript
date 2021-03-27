@@ -22,7 +22,7 @@ class MemberRepository
 
     GetById(Id) //review
     {
-        let header = SheetColumnHeaderAndIndexes.MemberSheet.Columns.ReceiptNumber.header;
+        let header = SheetColumnHeaderAndIndexes.MemberSheet.Columns.MemberId.header;
 
         let whereCondition = {}
         whereCondition[header] = Id;
@@ -46,7 +46,6 @@ class MemberRepository
     SetExpired(payeeMemberId)
     {
         let payeeMemberSheetItem = this.GetById(payeeMemberId);
-
         if(payeeMemberSheetItem.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.Status.header) == MemberStatus.ACTIVE.StatusName)
         {
             payeeMemberSheetItem.setFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.Status.header, MemberStatus.EXPIRED.StatusName);

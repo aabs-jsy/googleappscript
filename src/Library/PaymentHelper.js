@@ -53,7 +53,7 @@ class PaymentHelper
     let nextReceiptCounter = settingItemReceiptCounter.getFieldValue(SheetColumnHeaderAndIndexes.SettingsSheet.Columns.SettingValue.header) + 1;
     settingItemReceiptCounter.setFieldValue(SheetColumnHeaderAndIndexes.SettingsSheet.Columns.SettingValue.header, nextReceiptCounter);
     settingItemReceiptCounter.commit();
-
+  
     return nextReceiptCounter;
   }
 
@@ -63,30 +63,10 @@ class PaymentHelper
     payerMemeber.setFieldValue(payeeMemberId, receiptGenerationDateTime);
     payerMemeber.commit();
   }
-
-  static GeneratereceiptLog(unitOfWork, nextReceiptNumber, payerMemberId, payerMemberName, payeeMemberId, payeeMemberName, Amount, receiptGenerationDateTime, ReceiptCreator, paymentMode, reference )
-  {
-    let receiptLog = {};
-    receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.ReceiptNumber.header] = nextReceiptNumber;
-    receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PayerMemberId.header] = payerMemberId;
-    receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PayerMemberName.header] = payerMemberName;
-    receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PayeeMemberId.header] = payeeMemberId;
-    receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PayeeMemberName.header] = payeeMemberName;
-    receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.Amount.header] = Amount;
-    receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PaidOn.header] = receiptGenerationDateTime;
-    receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.GeneratedBy.header] = ReceiptCreator;
-    receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PaymentMode.header] = paymentMode;
-    receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.Reference.header] = reference;
-    receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.MessageStatus.header] = 'Pending';
-    receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.ReceiptLink.header] = '';
-    receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.Regenerate.header] = '';
-
-    unitOfWork.receiptLogRepository.Add(receiptLog);
-  }
-
+    
   static GenerateReceiptByAPI(nextReceiptNumber)
   {
-    let apiUrlWithParamertsAppended = `${AppConfig.GenerateReceiptApi}?rn=${nextReceiptNumber}`;
+    let apiUrlWithParamertsAppended = WebAPIs.GenerateReceiptAPI.replace('${receiptNumber}', nextReceiptNumber); //`${AppConfig.GenerateReceiptApi}?rn=${nextReceiptNumber}`;
 
     var js = "<html><head><script>window.open('"+apiUrlWithParamertsAppended+"', '_blank'); google.script.host.close();</script></head></html>"
     var html = HtmlService.createHtmlOutput(js)

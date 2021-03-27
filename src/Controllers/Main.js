@@ -24,17 +24,21 @@ function RequestToAcceptPayment()
       let PayerMemberId = sheetProvider.GetRowByNumber(eventProvider.activeCell.getRow())[SheetColumnHeaderAndIndexes.MemberSheet.Columns.MemberId.index];
       let PayeeMemberId = sheetProvider.GetColumnHeaderByNumber(eventProvider.activeCell.getColumn());
       let Amount = eventProvider.activeCell.getValue().replace('Pay ','').toString();
-      let ReceiptCreator = Session.getEffectiveUser().getEmail();
+      let ReceiptCreatorEmail = Session.getEffectiveUser().getEmail();
+
+      let settingItemReceiptCreatorEmail = new UnitOfWork().settingRepository.GetById(ReceiptCreatorEmail);
+      let ReceiptCreator = settingItemReceiptCreatorEmail.getFieldValue(SheetColumnHeaderAndIndexes.SettingsSheet.Columns.SettingValue.header);
+    
 
       new PaymentHandler(new UnitOfWork())
       .HandlePaymentRequest(PayerMemberId, PayeeMemberId, Amount, ReceiptCreator);
     }
   }
 
-function AcceptPayment(payerMemberId,payerMemberName, payeeMemberId, payeeMemberName, Amount, ReceiptCreator, paymentMode, reference) 
-{
+function AcceptPayment(payerMemberId,payerMemberName, payeeMemberId, payeeMemberName, Amount, payerMemberPhone, payerMemberWhatsApp, ReceiptCreator, payerMemberCity, payeeMemberCity, paymentMode, reference) 
+{  
     new PaymentHandler(new UnitOfWork())
-    .HandlePayment(payerMemberId,payerMemberName, payeeMemberId, payeeMemberName, Amount, ReceiptCreator, paymentMode, reference);
+    .HandlePayment(payerMemberId,payerMemberName, payeeMemberId, payeeMemberName, Amount, payerMemberPhone, payerMemberWhatsApp, ReceiptCreator, payerMemberCity, payeeMemberCity, paymentMode, reference);
 }
   
 function onEdit(e) 
@@ -44,7 +48,7 @@ function onEdit(e)
     var eventProvider = new EventProvider(e);
 
     if (!eventProvider.sheetEvent) return null;
-    
+   
     switch (eventProvider.sheetEvent) 
     {
       case SheetEvent.GENERATEPAYMENTLINKS:
@@ -74,10 +78,23 @@ function RefreshElimination()
 }
 
 function  TestScript()
-{ var tt = new MemberHandler(new UnitOfWork())
-  .TestScript(); 
+{ //var tt = new MemberHandler(new UnitOfWork())
+  //.TestScript(); 
 
-console.log(tt)
+  //   // Get a script lock, because we're about to modify a shared resource.
+  //   var lock = LockService.getScriptLock();
+  //   // Wait for up to 30 seconds for other processes to finish.
+  //   lock.waitLock(30000);
+  
+  //   var ticketNumber = Number(ScriptProperties.getProperty('lastTicketNumber')) + 1;
+  //   Utilities.sleep(5000);
+  //   ScriptProperties.setProperty('lastTicketNumber', ticketNumber);
+  
+  //   // Release the lock so that other processes can continue.
+  //   lock.releaseLock(); 
+  // GoogleScriptHelper.Alert(ticketNumber);
+
+//console.log(tt)
   
 }
 

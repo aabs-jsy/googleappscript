@@ -50,11 +50,11 @@ class EventProvider {
 
         switch (this.sheetName) {
             case SheetDcoument.MEMBERS:
-                if (this.activeCell.getRow() == MemberSheet.GetHeaderRow() && this.event) {
+                if (this.activeCell.getRow() == SheetColumnHeaderAndIndexes.MemberSheet.HeaderRownumber && this.event) {
                     return SheetEvent.GENERATEPAYMENTLINKS;
                 }
 
-                if (this.activeCell.getRow() != MemberSheet.GetHeaderRow()
+                if (this.activeCell.getRow() != SheetColumnHeaderAndIndexes.MemberSheet.HeaderRownumber
                     && !Utility.IsValueNullEmptyUndefied(this.activeCell.getValue())
                     && this.activeCell.getValue().toString().startsWith('Pay ')) {
                     return SheetEvent.ACCEPTPAYMENT;

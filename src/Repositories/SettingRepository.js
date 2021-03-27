@@ -21,7 +21,7 @@ class SettingRepository
     }
     GetById(Id) //review
     {
-        let header = SheetColumnHeaderAndIndexes.SettingsSheet.Columns.ReceiptNumber.header;
+        let header = SheetColumnHeaderAndIndexes.SettingsSheet.Columns.SettingKey.header;
 
         let whereCondition = {}
         whereCondition[header] = Id;

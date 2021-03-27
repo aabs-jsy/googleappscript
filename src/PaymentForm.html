@@ -196,8 +196,12 @@
           var payeeMemberName  = '<?= payeeMember.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.MemberName.header) ?>'; 
           var Amount = '<?= Amount ?>'; 
           var ReceiptCreator = '<?= ReceiptCreator ?>';
-          
-         google.script.run.AcceptPayment(payerMemberId,payerMemberName, payeeMemberId, payeeMemberName, Amount, ReceiptCreator, paymentMode, reference);
+          var payerMemberPhone  = '<?= payerMember.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.Phone.header) ?>'; 
+          var payerMemberWhatsApp  = '<?= payerMember.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.WhatsApp.header) ?>'; 
+          var payeeMemberCity  = '<?= payeeMember.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.City.header) ?>'; 
+          var payerMemberCity = '<?= payerMember.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.City.header) ?>'; 
+
+         google.script.run.AcceptPayment(payerMemberId,payerMemberName, payeeMemberId, payeeMemberName, Amount, payerMemberPhone, payerMemberWhatsApp, ReceiptCreator, payerMemberCity, payeeMemberCity, paymentMode, reference);
          setTimeout(() => {
           google.script.host.close();
          }, 1000);

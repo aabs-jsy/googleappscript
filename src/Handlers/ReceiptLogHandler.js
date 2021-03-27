@@ -5,7 +5,7 @@ class ReceiptLogHandler
         this.unitOfWork = unitOfWork;
     }
 
-    HandleToCreateReceiptLog(nextReceiptNumber, payerMemberId, payerMemberName, payeeMemberId, payeeMemberName, Amount, receiptGenerationDateTime, ReceiptCreator, paymentMode, reference )
+    HandleToCreateReceiptLog(nextReceiptNumber, payerMemberId, payerMemberName, payeeMemberId, payeeMemberName, Amount, receiptGenerationDateTime, payerMemberPhone, payerMemberWhatsApp, ReceiptCreator, payerMemberCity, payeeMemberCity, paymentMode, reference )
     {
         let receiptLog = {};
         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.ReceiptNumber.header] = nextReceiptNumber;
@@ -19,16 +19,24 @@ class ReceiptLogHandler
         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PaymentMode.header] = paymentMode;
         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.Reference.header] = reference;
         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.MessageStatus.header] = 'Pending';
-        receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.ReceiptLink.header] = '';
-        receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.Regenerate.header] = '';
+        receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.ReceiptLink.header] = '=HYPERLINK("'+ WebAPIs.ViewReceiptAPI.replace('${receiptNumber}', nextReceiptNumber)+'","View Receipt")';
+        receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.Regenerate.header] = '=HYPERLINK("'+ WebAPIs.GenerateReceiptAPI.replace('${receiptNumber}', nextReceiptNumber)+'","Resend Receipt")';
+        receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PayerMemberPhone.header] = payerMemberPhone;
+        receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PayerMemberWhatsApp.header] = payerMemberWhatsApp;
+        receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PayeeMemberCity.header] = payeeMemberCity;        
+        receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PayerMemberCity.header] = payerMemberCity;        
 
         this.unitOfWork.receiptLogRepository.Add(receiptLog);
     }
 
 
-    HandleToUpdateReceiptMessageStatus()
+    HandleToUpdateReceiptMessageStatusAndLink(receiptNumber, messageStatus, receiptLink)
     {
         // update receipt log
+        let receiptRowItem = this.unitOfWork.receiptLogRepository.GetById(receiptNumber);
+        receiptRowItem.setFieldValue(SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.MessageStatus.header, messageStatus)
+        receiptRowItem.setFieldValue(SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.ReceiptLink.header, receiptLink)
+        receiptRowItem.commit();        
     }
 
     HandleToReGenerateReceipt()
@@ -37,7 +45,7 @@ class ReceiptLogHandler
         // call api to regeneate
     }
 
-    GetReceiptObjectByReceiptNumer(receiptNumber)
+    GetReceiptByReceiptNumer(receiptNumber)
     { 
 
         let receiptLogSheetItemRow = this.unitOfWork.receiptLogRepository.GetById(receiptNumber);

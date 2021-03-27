@@ -26,7 +26,7 @@ class PaymentHandler {
     SpreadsheetApp.getUi().showModalDialog(htmlOutPut.evaluate().setHeight(600), 'રસીદ માહિતી (Please Confirm)');
   }
 
-  HandlePayment(payerMemberId, payerMemberName, payeeMemberId, payeeMemberName, Amount, ReceiptCreator, paymentMode, reference) 
+  HandlePayment(payerMemberId, payerMemberName, payeeMemberId, payeeMemberName, Amount, payerMemberPhone, payerMemberWhatsApp, ReceiptCreator, payerMemberCity, payeeMemberCity, paymentMode, reference) 
   {
     /* DEFINE RECEIPT GENERATE DATETIME */
     let receiptGenerationDateTime = Utility.GetCurrentDateTime();
@@ -46,20 +46,23 @@ class PaymentHandler {
       payeeMemberName, 
       Amount, 
       receiptGenerationDateTime, 
+      payerMemberPhone,
+      payerMemberWhatsApp,
       ReceiptCreator, 
+      payerMemberCity,
+      payeeMemberCity,
       paymentMode, 
       reference 
       );
 
       /* GENERATE RECEIPT THROUGH API */
       PaymentHelper.GenerateReceiptByAPI(nextReceiptNumber)
-
   }
 
   HandleToGeneratePaymentLinks(payeeMemberId) 
   {
     /* GET FIRST PAYMENT STAGE */
-    const firstDuePattern = Utility.ObjectPropertiesToList(AppConfig.PaymentPattern).filter((x)=>x.isFirstStage)[0];
+    const firstDuePattern = Utility.ObjectPropertiesToList(PaymentPattern).filter((x)=>x.isFirstStage)[0];
     
     /* GENERATE PAYMENT LINKS */
     PaymentHelper.UpdateCellPaymentLinkByPattern(this.unitOfWork, payeeMemberId,firstDuePattern );
@@ -69,7 +72,7 @@ class PaymentHandler {
   {
 
     const allExpiredMemberSheetItemRows = this.unitOfWork.memberRepostitory.GetAllExpired();
-    const duePatterns = Utility.ObjectPropertiesToList(AppConfig.PaymentPattern);
+    const duePatterns = Utility.ObjectPropertiesToList(PaymentPattern);
 
     duePatterns.forEach((duePattern, index) => 
     {
@@ -96,7 +99,7 @@ class PaymentHandler {
     // foreach to eligable and update elimination
 
     const allExpiredMemberSheetItemRows = this.unitOfWork.memberRepostitory.GetAllExpired();
-    const finalDuePattern = Utility.ObjectPropertiesToList(AppConfig.PaymentPattern).filter((x)=>x.isEliminationStage)[0];
+    const finalDuePattern = Utility.ObjectPropertiesToList(PaymentPattern).filter((x)=>x.isEliminationStage)[0];
 
       if (Utility.IsValueNullEmptyUndefied(finalDuePattern)) return;
 

@@ -14,13 +14,14 @@ class MemberHandler
     
         /* lets check for event validation before generate payment links */
         var isValidEvent = this.ValidateExpiryEvent(eventProvider);
-    
+ 
         /* return if event is not valid */
         if (!isValidEvent) return;
         /* get payeememberid from event */
         var payeeMemberId = eventProvider.activeCell.getValue();
 
         this.unitOfWork.memberRepostitory.SetExpired(payeeMemberId);
+        
         this.paymentHandler.HandleToGeneratePaymentLinks(payeeMemberId);
     }
 
@@ -51,7 +52,7 @@ class MemberHandler
         }
 
         /* LETS CHECK PATTERN OF MEMBERID */
-        if (!Utility.MatchWithRegx(editedCellNewValue, AppConfig.MemberIdRegx)) {
+        if (!Utility.MatchWithRegx(editedCellNewValue, AppRegx.MemberIdRegx)) {
             eventProvider.activeCell.setValue('');
             throw new Error("Invalid MemberId pasted! System will reject this input.");
         }
@@ -77,7 +78,8 @@ class MemberHandler
 
 
         /* make sure the edited column of first row should be the valid last column of the first row. */
-        let headerRow = this.unitOfWork.memberRepostitory.header;
+        let headerRow = new SheetProvider(GoogleScriptHelper.GetSheetByName(SheetDcoument.MEMBERS))
+        .GetRowByNumber(SheetColumnHeaderAndIndexes.MemberSheet.HeaderRownumber)
 
         if(!Utility.IsValueNullEmptyUndefied(headerRow) && headerRow.length > 0)
         {            
