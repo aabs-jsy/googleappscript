@@ -32,10 +32,24 @@ class ReceiptLogRepository
 
     Add(member)
     {
-        console.log(member);
-        var table = getTable(SheetDcoument.RECEIPTLOG, 1);
-        table.add(member);
-        table.commit();
+        // console.log(member);
+        // var table = getTable(SheetDcoument.RECEIPTLOG, 1);
+        // table.add(member);
+        // table.commit();
+
+       var sheet = GoogleScriptHelper.GetSheetByName(SheetDcoument.RECEIPTLOG);
+
+       let columns = Utility.ObjectPropertiesToList(SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns);
+        
+       columns.sort(function(a, b){ return a.index - b.index});
+       let row=[];
+
+       columns.forEach((item)=>
+       {
+            row.push(member[item.header]);
+       });
+      
+       sheet.appendRow(row);
     }
 
     GetAsObject(sheetRowItem)

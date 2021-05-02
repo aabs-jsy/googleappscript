@@ -1,5 +1,5 @@
 const SheetDcoument = {
-    MEMBERS: "Members2",
+    MEMBERS: "Members",
     RECEIPTLOG: "ReceiptLogs",
     Settings: "Settings",
 };
@@ -74,7 +74,7 @@ const ErrorCodes =
 const MemberStatus = {
     PENDING: {StatusName: "PENDING", ColorCode: '#fff;'}, 
     ACTIVE: {StatusName: "ACTIVE", ColorCode: '#fff;'},
-    INACTIVE: {StatusName: "INACTIVE", ColorCode: '#ffe599'},
+    INACTIVE: {StatusName: "INACTIVE", ColorCode: '#fff2cc'},
     EXPIRED:{StatusName: "EXPIRED", ColorCode: '#f4cccc'} ,
     ELIMINATED: {StatusName: "ELIMINATED", ColorCode: '#d9d2e9'},
   };

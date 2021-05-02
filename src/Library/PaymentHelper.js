@@ -13,7 +13,7 @@ class PaymentHelper
         {
           let currentStatusOfMember = memberSheetItemRow.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.Status.header);
           
-          if(currentStatusOfMember == MemberStatus.ACTIVE.StatusName || currentStatusOfMember == MemberStatus.INACTIVE.StatusName)
+          if(currentStatusOfMember == MemberStatus.ACTIVE.StatusName)
           {
             memberSheetItemRow.setFieldValue(payeeMemberId, 'Pay ' + nextDuePattern.amount);
             memberSheetItemRow.setFieldFontColor(payeeMemberId, '#4285f4')
@@ -26,7 +26,7 @@ class PaymentHelper
             memberSheetItemRow.setFieldFontColor(payeeMemberId, '#000')
           }
          
-          memberSheetItemRow.commit();
+         // memberSheetItemRow.commit();
         });
 
       }
@@ -41,20 +41,35 @@ class PaymentHelper
               memberSheetItemRow.setFieldValue(payeeMemberId, 'Pay ' + nextDuePattern.amount);
               memberSheetItemRow.setFieldFontColor(payeeMemberId, '#4285f4')
             }
-            memberSheetItemRow.commit();
+          //  memberSheetItemRow.commit();
           });        
       }
+
+      unitOfWork.memberRepostitory._table.commit();
     }
   }
 
   static GenerateNextReceiptNumber(unitOfWork)
   {
-    let settingItemReceiptCounter = unitOfWork.settingRepository.GetById('ReceiptCounter');
-    let nextReceiptCounter = settingItemReceiptCounter.getFieldValue(SheetColumnHeaderAndIndexes.SettingsSheet.Columns.SettingValue.header) + 1;
-    settingItemReceiptCounter.setFieldValue(SheetColumnHeaderAndIndexes.SettingsSheet.Columns.SettingValue.header, nextReceiptCounter);
-    settingItemReceiptCounter.commit();
+    // let settingItemReceiptCounter = unitOfWork.settingRepository.GetById('ReceiptCounter');
+    // let nextReceiptCounter = settingItemReceiptCounter.getFieldValue(SheetColumnHeaderAndIndexes.SettingsSheet.Columns.SettingValue.header) + 1;
+    // settingItemReceiptCounter.setFieldValue(SheetColumnHeaderAndIndexes.SettingsSheet.Columns.SettingValue.header, nextReceiptCounter);
+    // settingItemReceiptCounter.commit();
   
-    return nextReceiptCounter;
+
+        // Get a script lock, because we're about to modify a shared resource.
+    var lock = LockService.getScriptLock();
+    // Wait for up to 30 seconds for other processes to finish.
+    lock.waitLock(30000);
+  
+    let ticketNumber = Number(ScriptProperties.getProperty('lastTicketNumber')) + 1;    
+    ScriptProperties.setProperty('lastTicketNumber', ticketNumber.toString());
+  
+    // Release the lock so that other processes can continue.
+    lock.releaseLock(); 
+  
+
+    return ticketNumber;
   }
 
   static SetReceiptDateForPayerMember(unitOfWork, payerMemberId, payeeMemberId, receiptGenerationDateTime)
