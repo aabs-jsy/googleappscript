@@ -1,11 +1,18 @@
 {
   "timeZone": "Asia/Kolkata",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
   "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "Sheetfu",
+        "version": "14",
+        "libraryId": "1N8BGDNX4N64WP4HRjsnZJNwBx2UrAbc_DPZKYwFnVxqzeJdqEJQuCBSv"
+      }
+    ]
   },
   "webapp": {
-    "access": "ANYONE_ANONYMOUS",
-    "executeAs": "USER_DEPLOYING"
-  },
-  "exceptionLogging": "STACKDRIVER",
-  "runtimeVersion": "V8"
+    "executeAs": "USER_DEPLOYING",
+    "access": "ANYONE_ANONYMOUS"
+  }
 }

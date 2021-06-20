@@ -1,12 +1,23 @@
 class EventProvider {
     constructor(event) {
         // todo: review
-        this.event = event;
-        this.sheetName = this.IdentifySheet();
-        this.eventSheet = DataProvider.GetSheetByName(this.sheetName);
-        this.activeCell = this.eventSheet != null ? this.eventSheet.getActiveCell() : null; // todo: review
-        this.sheetEvent = this.IdentifySheetEvent();
-        this.oldValue = this.event.oldValue;
+
+        if(event)
+        {
+            this.event = event;
+            this.sheetName = this.IdentifySheet();
+            this.eventSheet = GoogleScriptHelper.GetSheetByName(this.sheetName);
+            this.activeCell = this.eventSheet != null ? this.eventSheet.getActiveCell() : null; // todo: review
+            this.sheetEvent = this.IdentifySheetEvent();
+            this.oldValue = this.event.oldValue;
+        }
+        else
+        {
+            this.eventSheet = SpreadsheetApp.getActiveSheet();
+            this.sheetName = this.eventSheet.getSheetName();
+            this.activeCell = this.eventSheet != null ? this.eventSheet.getActiveCell() : null; // todo: review
+            this.sheetEvent = this.IdentifySheetEvent();
+        }
     }
 
     IdentifySheet() {
@@ -23,7 +34,7 @@ class EventProvider {
             return null;
 
         var sheetDocumentKey = Object.keys(SheetDcoument)
-            .filter(key => DataProvider.AreStringsEqual(SheetDcoument[key], sheetNameInEvent));
+            .filter(key => Utility.AreStringsEqual(SheetDcoument[key], sheetNameInEvent));
 
         if (!sheetDocumentKey)
             return null;
@@ -33,16 +44,20 @@ class EventProvider {
 
     IdentifySheetEvent() {
 
-        if (DataProvider.IsValueNullEmptyUndefied(this.sheetName)) return null;
-
-        if (!this.event) return null;
+        if (Utility.IsValueNullEmptyUndefied(this.sheetName)) return null;
 
         if (!this.activeCell) return null;
 
         switch (this.sheetName) {
             case SheetDcoument.MEMBERS:
-                if (this.activeCell.getRow() == MemberSheet.GetHeaderRow()) {
+                if (this.activeCell.getRow() == SheetColumnHeaderAndIndexes.MemberSheet.HeaderRownumber && this.event) {
                     return SheetEvent.GENERATEPAYMENTLINKS;
+                }
+
+                if (this.activeCell.getRow() != SheetColumnHeaderAndIndexes.MemberSheet.HeaderRownumber
+                    && !Utility.IsValueNullEmptyUndefied(this.activeCell.getValue())
+                    && this.activeCell.getValue().toString().startsWith('Pay ')) {
+                    return SheetEvent.ACCEPTPAYMENT;
                 }
                 break;
 
