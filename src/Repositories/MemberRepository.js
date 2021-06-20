@@ -62,11 +62,11 @@ class MemberRepository
 
     GetAsObject(sheetRowItem)
     {
-        let fields = Utility.ObjectPropertiesToList(SheetColumnHeaderAndIndexes.MemberSheet.Columns)
+        let fields = this.HeaderColumn;
         let returnObject = {}  
         
         if(fields)     
-        fields.forEach((x)=> returnObject[x.header] = sheetRowItem.getFieldValue(x.header))
+        fields.forEach((x)=> returnObject[x] = sheetRowItem.getFieldValue(x))
 
         return returnObject;
     }

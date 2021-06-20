@@ -108,5 +108,7 @@ const MemberStatus = {
    {
        GetReceipt : {HTTPMethod : "GET", Command : "api/receipts/{receiptNumber}"},
        UpdateReceipt : {HTTPMethod : "PUT", Command : "api/receipts/{receiptNumber}"},
+       PostReceipt : {HTTPMethod : "POST", Command : "api/receipts"},
+       GetMembers : {HTTPMethod : "GET", Command : "api/members"},
    }
   
