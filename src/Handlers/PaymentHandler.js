@@ -57,6 +57,48 @@ class PaymentHandler {
 
       /* GENERATE RECEIPT THROUGH API */
       PaymentHelper.GenerateReceiptByAPI(nextReceiptNumber)
+  } 
+  
+  HandlePaymentByApi(payerMemberId, payeeMemberId, reference, receiptCreator, paymentMode)
+  {
+    /* GET MEMBERS INFORMATION */
+    let payeeMember = this.unitOfWork.memberRepostitory.GetById(payeeMemberId);
+    let payerMember = this.unitOfWork.memberRepostitory.GetById(payerMemberId);
+    let amount = payerMember.getFieldValue(payeeMemberId).toString().replace('Pay ','').toString();
+
+    if(isNaN(amount))
+    {
+      return 0;
+    }
+
+    /* DEFINE RECEIPT GENERATE DATETIME */
+    let receiptGenerationDateTime = Utility.GetCurrentDateTime();
+
+    /* DEFINE NEXT RECEIPT NUMBER */
+    const nextReceiptNumber = PaymentHelper.GenerateNextReceiptNumber(this.unitOfWork);
+
+    /* SET RECEIPT-DATETIME FOR PAYER MEMBER */
+    PaymentHelper.SetReceiptDateForPayerMember(this.unitOfWork, payerMemberId, payeeMemberId, receiptGenerationDateTime);    
+
+    /* GENERATE TRASANCTIONLOG */
+    new ReceiptLogHandler(new UnitOfWork()).HandleToCreateReceiptLog(
+      nextReceiptNumber, 
+      payerMemberId, 
+      payerMember.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.MemberName.header), 
+      payeeMemberId, 
+      payeeMember.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.MemberName.header), 
+      amount, 
+      receiptGenerationDateTime, 
+      payerMember.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.Phone.header),
+      payerMember.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.WhatsApp.header),
+      receiptCreator, 
+      payerMember.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.City.header),
+      payeeMember.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.City.header),
+      paymentMode, 
+      reference 
+      );
+
+    return nextReceiptNumber;
   }
 
   HandleToGeneratePaymentLinks(payeeMemberId) 

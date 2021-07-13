@@ -104,6 +104,21 @@ class MemberHandler
         // reject input if there is no valid row-column combination of active area
         // think about ctrl+z, delete
 
+    } 
+
+    GetAllMembers()
+    { 
+        let membersSheetItemRow = this.unitOfWork.memberRepostitory.Get();
+
+        if(!membersSheetItemRow) return null;
+        
+        let members =[];
+
+        membersSheetItemRow.forEach(member => {
+            members.push(this.unitOfWork.memberRepostitory.GetAsObject(member));
+        });
+     
+        return members;
     }
 
     TestScript()
