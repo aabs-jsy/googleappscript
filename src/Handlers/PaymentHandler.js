@@ -35,7 +35,7 @@ class PaymentHandler {
     const nextReceiptNumber = PaymentHelper.GenerateNextReceiptNumber(this.unitOfWork);
 
     /* SET RECEIPT-DATETIME FOR PAYER MEMBER */
-    PaymentHelper.SetReceiptDateForPayerMember(this.unitOfWork, payerMemberId, payeeMemberId, receiptGenerationDateTime);
+    PaymentHelper.SetReceiptDateForPayerMember(new UnitOfWork(), payerMemberId, payeeMemberId, receiptGenerationDateTime);
 
     /* GENERATE TRASANCTIONLOG */
     new ReceiptLogHandler(new UnitOfWork()).HandleToCreateReceiptLog(
@@ -78,7 +78,7 @@ class PaymentHandler {
     const nextReceiptNumber = PaymentHelper.GenerateNextReceiptNumber(this.unitOfWork);
 
     /* SET RECEIPT-DATETIME FOR PAYER MEMBER */
-    PaymentHelper.SetReceiptDateForPayerMember(this.unitOfWork, payerMemberId, payeeMemberId, receiptGenerationDateTime);    
+    PaymentHelper.SetReceiptDateForPayerMember(new UnitOfWork(), payerMemberId, payeeMemberId, receiptGenerationDateTime);    
 
     /* GENERATE TRASANCTIONLOG */
     new ReceiptLogHandler(new UnitOfWork()).HandleToCreateReceiptLog(
@@ -96,7 +96,7 @@ class PaymentHandler {
       payeeMember.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.City.header),
       paymentMode, 
       reference 
-      );
+      );       
 
     return nextReceiptNumber;
   }

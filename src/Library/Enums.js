@@ -20,6 +20,8 @@ const SheetDcoument = {
             WhatsApp: { header: "WhatsApp", index: 6 },
             ExpiredOn: { header: "ExpiredOn", index: 7 },
             EliminatedOn: { header: "EliminatedOn", index: 8 },
+            EliminatedOn: { header: "Balance", index: 9 }
+
         },
         HeaderRownumber: 1
      },

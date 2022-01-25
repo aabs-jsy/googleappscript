@@ -74,9 +74,18 @@ class PaymentHelper
 
   static SetReceiptDateForPayerMember(unitOfWork, payerMemberId, payeeMemberId, receiptGenerationDateTime)
   {
-    let payerMemeber = unitOfWork.memberRepostitory.GetById(payerMemberId);
-    payerMemeber.setFieldValue(payeeMemberId, receiptGenerationDateTime);
-    payerMemeber.commit();
+      // Get a script lock, because we're about to modify a shared resource.
+         var lock = LockService.getScriptLock();
+         // Wait for up to 30 seconds for other processes to finish.
+         lock.waitLock(5000);
+       
+        let payerMemeber = unitOfWork.memberRepostitory.GetById(payerMemberId);
+        payerMemeber.setFieldValue(payeeMemberId, receiptGenerationDateTime);
+       // payerMemeber.commit();
+       payerMemeber.commitFieldValue(payeeMemberId);
+
+         // Release the lock so that other processes can continue.
+         lock.releaseLock();
   }
     
   static GenerateReceiptByAPI(nextReceiptNumber)
