@@ -20,8 +20,7 @@ const SheetDcoument = {
             WhatsApp: { header: "WhatsApp", index: 6 },
             ExpiredOn: { header: "ExpiredOn", index: 7 },
             EliminatedOn: { header: "EliminatedOn", index: 8 },
-            EliminatedOn: { header: "Balance", index: 9 }
-
+            Balance: { header: "Balance", index: 9 },            
         },
         HeaderRownumber: 1
      },
@@ -42,10 +41,11 @@ const SheetDcoument = {
             PayerMemberWhatsApp: { header: "PayerMemberWhatsApp", index: 10 },
             GeneratedBy: { header: "GeneratedBy", index: 11 },
             PayerMemberCity: { header: "PayerMemberCity", index: 12 },            
-            PayeeMemberCity: { header: "PayeeMemberCity", index: 13 },            
-            MessageStatus: { header: "MessageStatus", index: 14 },
-            ReceiptLink: { header: "ReceiptLink", index: 15 },
-            Regenerate: { header: "Regenerate", index: 16 },
+            PayeeMemberCity: { header: "PayeeMemberCity", index: 13 }, 
+            WhatsAppStatus: { header: "WhatsAppStatus", index: 14 },           
+            MessageStatus: { header: "MessageStatus", index: 15 },
+            ResendWhatsApp: { header: "ResendWhatsApp", index: 16 },
+            ResendMessage: { header: "ResendMessage", index: 17 },
 
         },
         HeaderRownumber: 1

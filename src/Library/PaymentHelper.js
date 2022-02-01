@@ -72,18 +72,21 @@ class PaymentHelper
     return ticketNumber;
   }
 
-  static SetReceiptDateForPayerMember(unitOfWork, payerMemberId, payeeMemberId, receiptGenerationDateTime)
+  static SetReceiptDateForPayerMember(unitOfWork, payerMemberId, payeeMemberId, receiptGenerationDateTime, balance = 0)
   {
-      // Get a script lock, because we're about to modify a shared resource.
+   
+     // Get a script lock, because we're about to modify a shared resource.
          var lock = LockService.getScriptLock();
          // Wait for up to 30 seconds for other processes to finish.
          lock.waitLock(5000);
        
-        let payerMemeber = unitOfWork.memberRepostitory.GetById(payerMemberId);
-        payerMemeber.setFieldValue(payeeMemberId, receiptGenerationDateTime);
-       // payerMemeber.commit();
-       payerMemeber.commitFieldValue(payeeMemberId);
+         let payerMemeber = unitOfWork.memberRepostitory.GetById(payerMemberId);
+         payerMemeber.setFieldValue(payeeMemberId, receiptGenerationDateTime);
+         payerMemeber.setFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.Balance.header, balance);
 
+         //payerMemeber.commit();
+         payerMemeber.commitFieldValue(payeeMemberId);
+       
          // Release the lock so that other processes can continue.
          lock.releaseLock();
   }

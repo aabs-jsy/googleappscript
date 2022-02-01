@@ -52,7 +52,7 @@ function GetReceiptHandler(request)
         return ContentService.createTextOutput(JSON.stringify({ Message: "Invalid Data in request." })).setMimeType(ContentService.MimeType.JSON);   
     }
 }
-
+/*
 function UpdateReceiptHandler(request)
 {
     let hyperLinkToViewReceipt = '=HYPERLINK("'+ request.parameter.receiptLink +'","View Receipt")';  
@@ -60,6 +60,26 @@ function UpdateReceiptHandler(request)
 
     new ReceiptLogHandler(new UnitOfWork())
     .HandleToUpdateReceiptMessageStatusAndLink(request.parameter.receiptNumber, viewMessageStatus, hyperLinkToViewReceipt);
+
+    return ContentService.createTextOutput(JSON.stringify(request))
+}*/
+
+function UpdateReceiptHandler(request)
+{
+    let messageStatus = (request.parameter.messageStatus && request.parameter.messageStatus != '') ? request.parameter.messageStatus: '' ;  
+    let whatsAppStatus = (request.parameter.whatsAppStatus && request.parameter.whatsAppStatus != '') ? request.parameter.whatsAppStatus: '' ;  
+
+    if(messageStatus && messageStatus != '')
+    {      
+      new ReceiptLogHandler(new UnitOfWork())
+      .HandleToUpdateReceiptMessageStatus(request.parameter.receiptNumber, messageStatus);
+    }
+
+    if(whatsAppStatus && whatsAppStatus != "")
+    {      
+      new ReceiptLogHandler(new UnitOfWork())
+      .HandleToUpdateReceiptWhatsAppStatus(request.parameter.receiptNumber, whatsAppStatus);
+    }  
 
     return ContentService.createTextOutput(JSON.stringify(request))
 }
@@ -98,9 +118,10 @@ function PostReceiptHandler(request)
         let reference = request.parameter.reference;  
         let paymentMode = request.parameter.paymentMode;
         let receiptCreator = request.parameter.receiptCreator;      
+        let balance = request.parameter.balance;
 
         let receiptNumber = new PaymentHandler(new UnitOfWork())
-        .HandlePaymentByApi(payerMemberId, payeeMemberId, reference, receiptCreator, paymentMode);
+        .HandlePaymentByApi(payerMemberId, payeeMemberId, reference, receiptCreator, paymentMode, balance);
 
         if(receiptNumber)
         {
