@@ -19,12 +19,17 @@ class ReceiptLogHandler
         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PaymentMode.header] = paymentMode;
         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.Reference.header] = reference;
         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.MessageStatus.header] = 'Pending';
-        receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.ReceiptLink.header] = '=HYPERLINK("'+ WebAPIs.ViewReceiptAPI.replace('${receiptNumber}', nextReceiptNumber)+'","View Receipt")';
-        receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.Regenerate.header] = '=HYPERLINK("'+ WebAPIs.GenerateReceiptAPI.replace('${receiptNumber}', nextReceiptNumber)+'","Resend Receipt")';
+       // receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.ReceiptLink.header] = '=HYPERLINK("'+ WebAPIs.ViewReceiptAPI.replace('${receiptNumber}', nextReceiptNumber)+'","View Receipt")';
+     //   receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.Regenerate.header] = '=HYPERLINK("'+ WebAPIs.GenerateReceiptAPI.replace('${receiptNumber}', nextReceiptNumber)+'","Resend Receipt")';
         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PayerMemberPhone.header] = payerMemberPhone;
         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PayerMemberWhatsApp.header] = payerMemberWhatsApp;
         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PayeeMemberCity.header] = payeeMemberCity;        
-        receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PayerMemberCity.header] = payerMemberCity;        
+        receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PayerMemberCity.header] = payerMemberCity; 
+        
+        receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.WhatsAppStatus.header] = 'Pending'; 
+        receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.MessageStatus.header] = 'Pending'; 
+        receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.ResendWhatsApp.header] = '';  
+        receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.ResendMessage.header] = '';        
 
         this.unitOfWork.receiptLogRepository.Add(receiptLog);
     }
@@ -36,6 +41,22 @@ class ReceiptLogHandler
         let receiptRowItem = this.unitOfWork.receiptLogRepository.GetById(receiptNumber);
         receiptRowItem.setFieldValue(SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.MessageStatus.header, messageStatus)
         receiptRowItem.setFieldValue(SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.ReceiptLink.header, receiptLink)
+        receiptRowItem.commit();        
+    }
+
+     HandleToUpdateReceiptMessageStatus(receiptNumber, messageStatus)
+    {
+        // update receipt log
+        let receiptRowItem = this.unitOfWork.receiptLogRepository.GetById(receiptNumber);
+        receiptRowItem.setFieldValue(SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.MessageStatus.header, messageStatus)        
+        receiptRowItem.commit();        
+    }
+
+     HandleToUpdateReceiptWhatsAppStatus(receiptNumber, whatsAppStatus)
+    {
+        // update receipt log
+        let receiptRowItem = this.unitOfWork.receiptLogRepository.GetById(receiptNumber);
+        receiptRowItem.setFieldValue(SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.WhatsAppStatus.header, whatsAppStatus)
         receiptRowItem.commit();        
     }
 

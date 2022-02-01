@@ -56,14 +56,15 @@ class PaymentHandler {
       );
 
       /* GENERATE RECEIPT THROUGH API */
-      PaymentHelper.GenerateReceiptByAPI(nextReceiptNumber)
+      PaymentHelper.GenerateReceiptByAPI(nextReceiptNumber) 
   } 
   
-  HandlePaymentByApi(payerMemberId, payeeMemberId, reference, receiptCreator, paymentMode)
+  HandlePaymentByApi(payerMemberId, payeeMemberId, reference, receiptCreator, paymentMode, balance)
   {
     /* GET MEMBERS INFORMATION */
-    let payeeMember = this.unitOfWork.memberRepostitory.GetById(payeeMemberId);
+    let payeeMember = this.unitOfWork.memberRepostitory.GetById(payeeMemberId);    
     let payerMember = this.unitOfWork.memberRepostitory.GetById(payerMemberId);
+    
     let amount = payerMember.getFieldValue(payeeMemberId).toString().replace('Pay ','').toString();
 
     if(isNaN(amount))
@@ -78,7 +79,7 @@ class PaymentHandler {
     const nextReceiptNumber = PaymentHelper.GenerateNextReceiptNumber(this.unitOfWork);
 
     /* SET RECEIPT-DATETIME FOR PAYER MEMBER */
-    PaymentHelper.SetReceiptDateForPayerMember(new UnitOfWork(), payerMemberId, payeeMemberId, receiptGenerationDateTime);    
+    PaymentHelper.SetReceiptDateForPayerMember(this.unitOfWork, payerMemberId, payeeMemberId, receiptGenerationDateTime, balance);    
 
     /* GENERATE TRASANCTIONLOG */
     new ReceiptLogHandler(new UnitOfWork()).HandleToCreateReceiptLog(
@@ -96,7 +97,7 @@ class PaymentHandler {
       payeeMember.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.City.header),
       paymentMode, 
       reference 
-      );       
+      );
 
     return nextReceiptNumber;
   }
@@ -167,5 +168,5 @@ class PaymentHandler {
             }); 
           });
       }
-  }  
+  }
 }
