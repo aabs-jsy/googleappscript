@@ -30,6 +30,11 @@ function doPost(request) {
             return GetMembersHandlers(request);
         }
 
+         if(Utility.AreStringsEqual(httpMethod,APICommands.PostBalance.HTTPMethod) && Utility.AreStringsEqual(command,APICommands.PostBalance.Command))
+        {
+            return PostBalanceHandler(request);
+        }
+
     }
 
     return ContentService.createTextOutput(JSON.stringify({ Message: "Invalid Data in request.",request:request })).setMimeType(ContentService.MimeType.JSON);  
@@ -135,6 +140,32 @@ function PostReceiptHandler(request)
         {
             return ContentService.createTextOutput(JSON.stringify({ Message: "Receipt not found." })).setMimeType(ContentService.MimeType.JSON);   
         }
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ Message: "UnAuthtorized request." })).setMimeType(ContentService.MimeType.JSON);   
+}
+
+function PostBalanceHandler(request)
+{
+
+    // let token = request.parameter.token;
+    // let tokenDateTime = new Date(token);
+    // let dateTime1min = addMinutes(new Date(),-1); //Date.now()+(new Date().getTimezoneOffset()*60000)).getTime()
+    // return ContentService.createTextOutput(JSON.stringify({token,tokenDateTime,dateTime1min})).setMimeType(ContentService.MimeType.JSON); 
+
+
+    if(AuthenticateRequest(request))
+    {
+        let balanceUpdateRequest = request.parameter.balanceUpdateRequest;
+
+        if(balanceUpdateRequest != '')
+        {
+          new PaymentHandler(new UnitOfWork())
+          .HandleToUpdateBalances(balanceUpdateRequest) 
+        }
+       
+       return ContentService.createTextOutput(JSON.stringify({ Message: "Ok" })).setMimeType(ContentService.MimeType.JSON);   
+
     }
 
     return ContentService.createTextOutput(JSON.stringify({ Message: "UnAuthtorized request." })).setMimeType(ContentService.MimeType.JSON);   

@@ -42,10 +42,11 @@ const SheetDcoument = {
             GeneratedBy: { header: "GeneratedBy", index: 11 },
             PayerMemberCity: { header: "PayerMemberCity", index: 12 },            
             PayeeMemberCity: { header: "PayeeMemberCity", index: 13 }, 
-            WhatsAppStatus: { header: "WhatsAppStatus", index: 14 },           
-            MessageStatus: { header: "MessageStatus", index: 15 },
-            ResendWhatsApp: { header: "ResendWhatsApp", index: 16 },
-            ResendMessage: { header: "ResendMessage", index: 17 },
+            BalanceAfterReceipt: { header: "BalanceAfterReceipt", index: 14 },                       
+            WhatsAppStatus: { header: "WhatsAppStatus", index: 15 },           
+            MessageStatus: { header: "MessageStatus", index: 16 },
+            ResendWhatsApp: { header: "ResendWhatsApp", index: 17 },
+            ResendMessage: { header: "ResendMessage", index: 18 },
 
         },
         HeaderRownumber: 1
@@ -112,5 +113,6 @@ const MemberStatus = {
        UpdateReceipt : {HTTPMethod : "PUT", Command : "api/receipts/{receiptNumber}"},
        PostReceipt : {HTTPMethod : "POST", Command : "api/receipts"},
        GetMembers : {HTTPMethod : "GET", Command : "api/members"},
+       PostBalance : {HTTPMethod : "POST", Command : "api/balances"}
    }
   

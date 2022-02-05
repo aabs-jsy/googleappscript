@@ -5,7 +5,7 @@ class ReceiptLogHandler
         this.unitOfWork = unitOfWork;
     }
 
-    HandleToCreateReceiptLog(nextReceiptNumber, payerMemberId, payerMemberName, payeeMemberId, payeeMemberName, Amount, receiptGenerationDateTime, payerMemberPhone, payerMemberWhatsApp, ReceiptCreator, payerMemberCity, payeeMemberCity, paymentMode, reference )
+    HandleToCreateReceiptLog(nextReceiptNumber, payerMemberId, payerMemberName, payeeMemberId, payeeMemberName, Amount, receiptGenerationDateTime, payerMemberPhone, payerMemberWhatsApp, ReceiptCreator, payerMemberCity, payeeMemberCity, paymentMode, reference, balanceAfterReceipt = 0)
     {
         let receiptLog = {};
         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.ReceiptNumber.header] = nextReceiptNumber;
@@ -26,6 +26,7 @@ class ReceiptLogHandler
         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PayeeMemberCity.header] = payeeMemberCity;        
         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.PayerMemberCity.header] = payerMemberCity; 
         
+         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.BalanceAfterReceipt.header] = balanceAfterReceipt; 
         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.WhatsAppStatus.header] = 'Pending'; 
         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.MessageStatus.header] = 'Pending'; 
         receiptLog[SheetColumnHeaderAndIndexes.ReceiptLogSheet.Columns.ResendWhatsApp.header] = '';  

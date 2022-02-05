@@ -49,6 +49,39 @@ class PaymentHelper
     }
   }
 
+  static UpdateCellBalances(unitOfWork, balanceUpdateRequest)
+  {
+    let allMemberSheetItemRows = unitOfWork.memberRepostitory.Get();
+    const memberStatuses = Utility.ObjectPropertiesToList(MemberStatus);
+    let memberBalancesArray = []
+    const memberBalances = balanceUpdateRequest.split(";");
+
+    if (!Utility.IsValueNullEmptyUndefied(memberBalances) && memberBalances.length > 0) 
+        {
+          memberBalances.forEach((x)=> 
+          {
+            const [memberId,balance] = x.split("|");
+            memberBalancesArray.push({"memberId":memberId, "balance": balance})
+          })
+        }
+
+    if (!Utility.IsValueNullEmptyUndefied(allMemberSheetItemRows) && allMemberSheetItemRows.length > 0) 
+    {
+        allMemberSheetItemRows.forEach(memberSheetItemRow => 
+        {
+          let memberBalance = memberBalancesArray.find(x=>x.memberId == memberSheetItemRow.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.MemberId.header))  
+          
+          if(memberBalance && memberBalance.balance)
+          {
+              memberSheetItemRow.setFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.Balance.header, memberBalance.balance);
+              memberSheetItemRow.setFieldBackground(SheetColumnHeaderAndIndexes.MemberSheet.Columns.Balance.header, '#dadce0')
+          }          
+        });
+
+      unitOfWork.memberRepostitory._table.commit();
+    }
+  }  
+
   static GenerateNextReceiptNumber(unitOfWork)
   {
     // let settingItemReceiptCounter = unitOfWork.settingRepository.GetById('ReceiptCounter');
@@ -86,6 +119,7 @@ class PaymentHelper
 
          //payerMemeber.commit();
          payerMemeber.commitFieldValue(payeeMemberId);
+         payerMemeber.commitFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.Balance.header);
        
          // Release the lock so that other processes can continue.
          lock.releaseLock();

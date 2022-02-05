@@ -96,7 +96,8 @@ class PaymentHandler {
       payerMember.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.City.header),
       payeeMember.getFieldValue(SheetColumnHeaderAndIndexes.MemberSheet.Columns.City.header),
       paymentMode, 
-      reference 
+      reference ,
+      balance
       );
 
     return nextReceiptNumber;
@@ -109,6 +110,12 @@ class PaymentHandler {
     
     /* GENERATE PAYMENT LINKS */
     PaymentHelper.UpdateCellPaymentLinkByPattern(this.unitOfWork, payeeMemberId,firstDuePattern );
+  }
+
+  HandleToUpdateBalances(balanceUpdateRequest) 
+  {    
+    /*  UPDATE BALANCES */
+    PaymentHelper.UpdateCellBalances(this.unitOfWork, balanceUpdateRequest );
   }
 
   HandleRefreshPaymentLinks() 
